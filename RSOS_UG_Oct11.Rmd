@@ -3,8 +3,8 @@ title: Radical framing effects in the ultimatum game (Experimental Results, Disc
   and Supplementary Materials)
 author: "Aaron D. Lightner, Pat Barclay, Edward H. Hagen"
 output:
-  word_document: default
   html_document: default
+  word_document: default
 csl: vancouver.csl
 ---
 
@@ -33,9 +33,9 @@ library(AICcmodavg)
 library(diagram)
 library(visreg)
 library(viridis)
-install_github('alightner/framingdata2017')
+# install_github('alightner/framingdata2017')
 library(framingdata2017)
-install_github('alightner/dataAMT2017')
+# install_github('alightner/dataAMT2017')
 library(dataAMT2017)
 #load("~/Desktop/Docs/RSOS data AMT/dataAMT2017/data/UG.data.rda")
 df <- dataAMT2017::UG.data
