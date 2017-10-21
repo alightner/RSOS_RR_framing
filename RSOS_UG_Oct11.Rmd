@@ -59,14 +59,17 @@ dfps$condition <- factor(dfps$condition, levels=c('banker', 'control',
 
 
 ## p value reporting function
-p.function <- function(p) {
-  if (p >= 0.001) {
-    paste(c("p =", signif(p,3)), collapse = " ")
-  } else {
-    c("p < 0.001")
-  }
-}
+# p.function <- function(p) {
+#   if (p >= 0.001) {
+#     paste(c("p =", signif(p,3)), collapse = " ")
+#   } else {
+#     c("p < 0.001")
+#   }
+# }
 
+p.function <- function(p) {
+  paste(c("p =", signif(p,2)), collapse = " ")
+}
 
 ```
 
