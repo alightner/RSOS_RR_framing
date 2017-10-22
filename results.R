@@ -385,6 +385,10 @@ ce4 <- sd(d.temp$travel_exp)
 # "did you recognize this as a bargaining game from previous experience?"
 p.recUG <- (length(df$recognizeUG[df$recognizeUG=='Yes'])/length(df$recognizeUG))*100
 
+# Fair outcome vs. accept/reject
+
+fairout3p <- wilcox.test(fairoutcome ~ accept, d.temp)$p.value
+
 
 ##  ............................................................................
 ##  Summary stats                                                           ####

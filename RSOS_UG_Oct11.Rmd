@@ -115,9 +115,9 @@ We conducted exploratory analyses on both our pilot data and study data. Because
 
 **[CAN WE COMPARE SURVEY ATTRITION RATES IN PILOT VS FINAL?]**
 
-We retained the other exploratory measures noted in the Methods. 
+**I think we should report two or three basic analyses here (with details in the supplement), e.g., did expected payoffs influence reject decisions? did previous experience with the UG influence offers or acceptances? Were emotional responses predicted by offers (for responders) and acceptances (for proposers)?**
 
-**I think we should report two or three basic analyses here (with details in the supplement), e.g., did expected payoffs influence reject decisions? did previous experience with the UG influence offers or acceptances? Where emotional responses predicted by offers (for responders) and acceptances (for proposers)?**
+We retained the other exploratory measures noted in the Methods. Not surprisingly, participants rated the fairness of the outcome significantly lower when offers were rejected than when offers were accepted (M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==0], na.rm=T), 2)` vs. M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==1], na.rm=T), 2)` on a 1-5 point scale, `r p.function(fairout3p)` by Wilcoxon rank test).
 
 <!--
 Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. -->
