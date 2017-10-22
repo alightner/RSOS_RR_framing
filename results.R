@@ -143,7 +143,7 @@ p2 <- ggplot(data=subset(df, playerid==1), aes(x=offer)) + geom_histogram(binwid
 
 dt <- df
 dt$offer <- dt$offer/100
-dt$condition <- factor(dt$condition, levels=c('control', 'banker', 
+dt$condition <- factor(dt$condition, levels=c('banker', 'control', 
                                               'windfall', 'customer'))
 m_offers <- glm(offer ~ condition, family=binomial, subset(dt, playerid==1))
 
@@ -397,16 +397,8 @@ fairoutcome_stats2 <-
     data_frame(
         `Player type` = c('Proposer', 'Responder', 'All'),
         condition = c('All', 'All', 'All'),
-        Mean = c(
-          mean(fairoutcome[playerid==1]),
-          mean(fairoutcome[playerid==2]),
-          mean(fairoutcome)
-        ),
-        SD = c(
-          sd(fairoutcome[playerid==1]),
-          sd(fairoutcome[playerid==2]),
-          sd(fairoutcome)
-        )
+        Mean = c(mean(fairoutcome[playerid==1]), mean(fairoutcome[playerid==2]), mean(fairoutcome)),
+        SD = c(sd(fairoutcome[playerid==1]), sd(fairoutcome[playerid==2]), sd(fairoutcome))
       )
   }
   )
