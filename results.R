@@ -56,8 +56,13 @@ dfps$condition <- factor(dfps$condition, levels=c('banker', 'control',
 #   }
 # }
 
-p.function <- function(p) {
-  paste(c("p =", signif(p,2)), collapse = " ")
+p.function <- function(p, sigfigs = 2 ) {
+  p <- signif(p, sigfigs)
+  if (length(p) == 1){
+    return(paste("p = ", knitr:::format_sci(p, format='html')))
+  } else {
+    return(paste0("$", knitr:::format_sci(p), "$"))
+  }
 }
 
 

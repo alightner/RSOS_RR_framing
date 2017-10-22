@@ -16,7 +16,7 @@ source('results.R')
 
 ## Results
 
-We aimed to collect 60 pairs of participants in each of 4 conditions for a total N = 480. Based on our experience with attrition in our pilot study, we therefore recruited about 70 pairs of participants per condition. Following our *a priori* criteria, and before analyzing the data, participants were excluded if they did not complete the survey, which was determined by a failure to correctly enter a unique validation code at the end of the survey. This was only attainable if a participant correctly answered two attention check questions during the task, prior to reaching the validation code. These three exclusionary criteria were set out to remove from analyses participants less likely to be attentive. We also initially planned to exclude participants who finished the study too quickly (suggesting low attention), as seen in several participants in the pilot study, but because we were able to shorten the final study, that criterion did not apply to any participant. In addition, many other participants left the study beforehand, e.g., while the game was loading or after viewing the consent form (see Figure 5). After exclusions, we had a final sample of N = `r nrow(UG.data)`.
+We aimed to collect 60 pairs of participants in each of 4 conditions for a total N = 480. Based on our experience with attrition in our pilot study, we therefore recruited about 70 pairs of participants per condition. Following our *a priori* criteria, and before analyzing the data, participants were excluded if they did not complete the survey, which was determined by a failure to correctly enter a unique validation code at the end of the survey. This was only attainable if a participant correctly answered two attention check questions during the task, prior to reaching the validation code. These three exclusionary criteria were set out to remove from analyses participants less likely to be attentive. We also initially planned to exclude participants who finished the study too quickly (suggesting low attention), as seen in several participants in the pilot study, but because we were able to shorten the final study, that criterion did not apply to any participant. In addition, many other participants left the study beforehand, e.g., while the game was loading or after viewing the consent form (see Figure 5). After exclusions, we had a final sample of N = `r nrow(UG.data)`. We did not make any decisions on sample size based on observing the data.
 
 ```{r,echo=FALSE, fig.width=7, fig.height=5, fig.show='hold',fig.align='center'}
 
@@ -41,8 +41,9 @@ There was a large difference in the distribution of offers from excluded vs. inc
 In our experiment, the central tendency differences between treatment and control conditions were significant and conformed to our predictions, with offers in the banker condition (mean = `r signif(mean(df$offer[df$condition=='banker']),3)`, SD = `r signif(sd(df$offer[df$condition=='banker']),3)`) significantly higher than the control condition (mean = `r signif(mean(df$offer[df$condition=='control']),3)`, SD = `r signif(sd(df$offer[df$condition=='control']),3)`, t = `r signif(t1$statistic,3)`, `r p.function(t1$p.value)`, Cohen's d = `r signif(cohen.bank$estimate,3)`) and offers in the customer condition (mean = `r signif(mean(df$offer[df$condition=='customer']),3)`, SD = `r signif(sd(df$offer[df$condition=='customer']),3)`) significantly lower than the control condition (t = `r signif(t2$statistic,3)`, `r p.function(t2$p.value)`, Cohen's d = `r signif(cohen.cust$estimate,3)`). See Table 2 and Figure 7.
 
 ```{r echo=FALSE, warning=FALSE}
-
-kable(tidy(m_offers), digits = 2, caption = 'Table 2. Logistic regression model of mean offers by condition.')
+tmp <- tidy(m_offers)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table 2. Logistic regression model of mean offers by condition. Estimates are log odds. The base condition is the banker condition. See Figure 7 for an effects plot.')
 ```
 
 
@@ -50,7 +51,7 @@ kable(tidy(m_offers), digits = 2, caption = 'Table 2. Logistic regression model 
 plot(allEffects(m_offers), main='')
 ```
 
-**Figure 7.** Generalized linear model of the mean offer (as a proportion of the maximum possible offer) by condition. Bars indicate +/- 2 SE. See text for details.
+**Figure 7.** Effect plot of the mean offer (as a proportion of the maximum possible offer) by condition. Bars indicate +/- 2 SE. Model coefficients are in Table 2. See text for details.
 
 
 The data in each condition were not normally distributed (Shipiro Wilk: banker W = `r signif(shap1$statistic, 3)`, `r p.function(shap1$p.value)`; customer W = `r signif(shap2$statistic, 3)`, `r p.function(shap2$p.value)`; windfall W = `r signif(shap3$statistic, 3)`, `r p.function(shap3$p.value)`; control W = `r signif(shap4$statistic, 3)`, `r p.function(shap4$p.value)`). As stipulated in our *a priori* statistical analyses section we therefore also tested for differences in offers using a non-parametric Kruskal-Wallis rank sum test  ($\chi^2$ = `r signif(k$statistic, 3)`, `r p.function(k$p.value)`). Likewise, pairwise median differences between banker and control conditions (banker median = `r signif(median(df$offer[df$condition=='banker']),3)`, control median = `r signif(median(df$offer[df$condition=='control']),3)`) and customer and control conditions (customer median = `r signif(median(df$offer[df$condition=='customer']),3)`) were re-tested to confirm that our predictions were supported for both banker and customer conditions (banker-control Mann-Whitney U = `r signif(a1$statistic,3)`, `r p.function(a1$p.value)`, and Cliff's Delta = `r signif(cliff.bank$estimate,3)`; customer-control U = `r signif(a2$statistic,3)`, `r p.function(a2$p.value)`, and Cliff's Delta = `r signif(cliff.cust$estimate,3)`).
@@ -61,7 +62,9 @@ The probability of offer acceptance was modeled using a logistic regression (Tab
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-kable(tidy(m_accept), digits = 2, caption = 'Table 3. Logistic regression of responder acceptance probability as a function of offer amount by condition. Coefficients are log odds.')
+tmp <- tidy(m_accept)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table 3. Logistic regression model of responder acceptance probability as a function of offer amount and condition. Coefficients are log odds. For effects plot, see Figure 8.')
 ```
 
 
@@ -69,7 +72,7 @@ kable(tidy(m_accept), digits = 2, caption = 'Table 3. Logistic regression of res
 visreg(m_accept, xvar='offer', by='condition', scale='response', jitter = TRUE)
 ```
 
-**Figure 8.** Plot of logistic regression of responders' acceptance probability as a function of offer amount by condition (gray shaded areas indicate 2 SE, rug indicates offers). 
+**Figure 8.** Plot of logistic regression model of responders' acceptance probability as a function of offer amount and condition (gray shaded areas indicate 2 SE, rug indicates offers). Model coefficients are in Table 3.
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -98,7 +101,7 @@ plot_fair_actual
 **Figure 11.** Amount offered (%) among proposers in the banker and customer conditions, as a function of their reported opinions about fair currency fee (%). Conditions are separately represented by color.
 
 
-The pilot study results (previously discussed) informed our experimental design and caused us to slightly adjust our initial predictions and experimental protocol. To explore the effects of changing our protocol between pilot and experiment, we compare and contrast the results of this experiment to those of the pilot. As discussed in both this section and the "Pilot Study" section, we confirmed our predictions with large effect sizes between control and treatment conditions in both the pilot and the experiment. The offers in both (pilot and experiment) control conditions and both customer conditions did not significantly differ in central tendency (control condition: Mann-Whitney U = `r signif(pexpconmean$statistic,3)`, `r p.function(pexpconmean$p.value)`; customer condition: U = `r signif(pexpcustmean$statistic,3)`, `r p.function(pexpcustmean$p.value)`) or variance (control: Brown-Forsythe Levene F = `r signif(pexpconsdF,3)`, `r p.function(pexpconsdP)`; customer: F = `r signif(pexpcustsdF,3)`, `r p.function(pexpcustsdP)`). The banker condition in the experiment, however, yielded higher offers (U = `r signif(pexpbankmean$statistic,3)`, `r p.function(pexpbankmean$p.value)`) with lower offer variance (F = `r signif(pexpbanksdF,3)`, `r p.function(pexpbanksdP)`) than the banker condition in our pilot. The latter had a significantly higher variance than the other conditions in the study, which as discussed, was likely an artifact of confusing instructions (see Pilot Study). These comparisons indicate that the minor adjustments we made to study instructions following the pilot study improved our results (see Figure 12 and and supplementary materials for experimental GAMLSS analyses).
+The pilot study results (previously discussed) informed our experimental design and caused us to slightly adjust our initial predictions and experimental protocol. To explore the effects of changing our protocol between pilot and experiment, we compare and contrast the results of this experiment to those of the pilot. As discussed in both this section and the "Pilot Study" section, we confirmed our predictions with large effect sizes between control and treatment conditions in both the pilot and the experiment. The offers in both (pilot and experiment) control conditions and both customer conditions did not significantly differ in central tendency (control condition: Mann-Whitney U = `r signif(pexpconmean$statistic,3)`, `r p.function(pexpconmean$p.value)`; customer condition: U = `r signif(pexpcustmean$statistic,3)`, `r p.function(pexpcustmean$p.value)`) or variance (control: Brown-Forsythe Levene F = `r signif(pexpconsdF,3)`, `r p.function(pexpconsdP)`; customer: F = $`r signif(pexpcustsdF,2)`$, `r p.function(pexpcustsdP)`). The banker condition in the experiment, however, yielded higher offers (U = `r signif(pexpbankmean$statistic,3)`, `r p.function(pexpbankmean$p.value)`) with lower offer variance (F = `r signif(pexpbanksdF,3)`, `r p.function(pexpbanksdP)`) than the banker condition in our pilot. The latter had a significantly higher variance than the other conditions in the study, which as discussed, was likely an artifact of confusing instructions (see Pilot Study). These comparisons indicate that the minor adjustments we made to study instructions following the pilot study improved our results (see Figure 12 and supplementary materials for experimental GAMLSS analyses).
 
 ```{r echo=FALSE, warning=FALSE}
 grid.arrange(plot_pilot, plot_final)
@@ -108,9 +111,11 @@ grid.arrange(plot_pilot, plot_final)
 
 ## Exploratory analyses
 
-We conducted exploratory analyses on both our pilot data and study data. Because participant attrition was a concern (Figure 5 and Phase I supplement), we omitted some lengthy questions from the final study because analyses of the pilot data did not reveal strong evidence for theoretically important patterns. In particular, the SVO variable involved 9 items. In the pilot study, individuals classified as “prosocial” according to their SVO score made slightly, but not significantly, larger offers across the three conditions, compared to individuals classified as “individualistic.” As noted in our discussion of pilot study results (Phase I supplement), we would require a much larger sample size to have the power to detect an effect of SVO, if it exists. We therefore omitted the SVO items from the final study. We also omitted the minimum and maximum expected offers.
+We conducted exploratory analyses on both our pilot data and study data. Because participant attrition was a concern (Figure 5 and Phase I supplement), we shortened the study by omitting  exploratory items from the final study when analyses of the pilot data did not reveal strong evidence for theoretically important patterns. In particular, the SVO variable involved 9 items. In the pilot study, individuals classified as “prosocial” according to their SVO score made slightly, but not significantly, larger offers across the three conditions, compared to individuals classified as “individualistic.” As noted in our discussion of pilot study results (Phase I supplement), we would require a much larger sample size to have the power to detect an effect of SVO, if it exists. We therefore omitted the SVO items from the final study. We also omitted the minimum and maximum expected offers, which had little theoretical significance, to further shorten the study.
 
-We retained our other exploratory measures outlined in the Methods, but had no anomalous results to diagnose with exploratory analyses. Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. 
+**[CAN WE COMPARE SURVEY ATTRITION RATES IN PILOT VS FINAL?]**
+
+We retained the other exploratory measures noted in the Methods. Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. 
 
 
 
@@ -122,11 +127,13 @@ We retained our other exploratory measures outlined in the Methods, but had no a
 plot_effect_sizes
 ```
 
-**Figure 13.** Effect sizes (absolute values of Cohen's d) from this study (denoted by "**") and a representative sample of previous framing studies. Colors represent game type and bars indicate 95% CI. For reference, d = 0.8 is considered a large by convention.
+**Figure 13.** Effect sizes (absolute values of Cohen's d) from this study (denoted by "**") and a representative sample of previous framing studies. Colors represent game type and bars indicate 95% CI. For reference, d = 0.8 is considered a large effect by convention.
 
-## Supplementary materials (experimental study)
+# Supplementary materials (Phase II)
 
-Using our *a priori* exclusion criteria, we omitted data from `r signif(omitperc,3)`% of participants who made an offer in the UG. It is therefore important to assess how the excluded offers differed from the included offers. Figure 6 depicts the distributions of excluded offers in each condition vs. included offers. By visual inspection, the distributions of offers in the banker (left) and customer (right) conditions were fairly similar in excluded (top) and included (bottom) participants. The distributions in the control and windfall conditions, however, were quite different. Included participants almost always offered 50% in both of these conditions, whereas excluded participants often offered 0% (specifically, in these two conditions, `r signif(in50,3)`% of the included participants offered 50% and only `r signif(in0,3)`% offered 0%; in contrast, `r signif(out50,3)`% of excluded participants offered 50% and `r signif(out0,3)`% offered 0%). These differences had only a marginal impact on our main results. We fitted a model of offers by condition that included all participants (N = 770 instead of N = 472). Results were nearly identical to those depicted in Table 2 and Figure 7. We also fitted a model with an additional variable that indicated excluded status. The main effect of condition was still highly significant, there was no significant main effect of exclusion on offers, and there was only a marginally significant exclusion X condition interaction (`r p.function(m_included_excluded_pvalue)`). We do not have a good explanation for the propensity of excluded participants to offer 0% in the control and windfall conditions. Many control and windfall participants who opted out immediately after the game/before the survey had low offers and high rejection rates (`r signif(quitrej,3)`% rejected, mean = `r signif(quitoffer,3)`%), and most others were excluded for their failure to pass attention checks. 
+Using our *a priori* exclusion criteria, we omitted data from `r signif(omitperc,3)`% of participants who made an offer in the UG. It is therefore important to assess how the excluded offers differed from the included offers. Figure 6 depicts the distributions of offers of excluded vs. included participants, revealing a large difference between them only in the control and windfall conditions: `r 100*signif(in50, 2)`% of the included participants offered 50% and only `r 100*signif(in0, 2)`% offered 0%; in contrast, `r 100*signif(out50, 2)`% of excluded participants offered 50% and `r 100*signif(out0, 2)`% offered 0%). 
+
+These differences had only a marginal impact on our main results. We fitted a model of offers by condition that included all participants (N = 770 instead of N = 472). Results were nearly identical to those depicted in Table 2 and Figure 7. We also fitted a model with an additional variable that indicated excluded status. The main effect of condition was still highly significant, there was no significant main effect of exclusion on offers, and there was only a marginally significant exclusion X condition interaction (`r p.function(m_included_excluded_pvalue)`). We do not have a good explanation for the propensity of excluded participants to offer 0% in the control and windfall conditions. Many control and windfall participants who opted out immediately after the game/before the survey had low offers and high rejection rates (`r signif(quitrej,3)`% rejected, mean = `r signif(quitoffer,3)`%), and most others were excluded for their failure to pass attention checks. 
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 plot(allEffects(m_included_excluded), main='', ylab='offer')
@@ -138,12 +145,16 @@ plot(allEffects(m_included_excluded), main='', ylab='offer')
 
 
 ```{r echo=FALSE, warning=FALSE}
-kable(tidy(m_included_excluded_anova), digits = 3, caption = 'Table S1. ANOVA results for condition X excluded results.')
+tmp <- tidy(m_included_excluded_anova)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table S1. ANOVA results for condition X excluded results.')
 ```
 
 
 ```{r echo=FALSE, warning=FALSE}
-kable(tidy(m_included_excluded), digits = 3, caption = 'Table S2. Summary results for condition X excluded results.')
+tmp <- tidy(m_included_excluded)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table S2. Summary results for condition X excluded results.')
 ```
 
 
@@ -164,9 +175,7 @@ ggplot(subset(df, (condition=='control' | condition=='windfall') &
 **Figure S3.** Histograms of offer amounts in the control and windfall conditions by condition and responders' acceptance status (1 = accepted, 0 = rejected). 
 
 
-### Exploratory measures
-
-
+## Exploratory measures
 
 A potentially useful diagnostic measure was a survey question asking participants if they recognized the game as a bargaining game from previous experience. Overall, `r signif(p.recUG,3)`% of participants recognized the UG, and this number was > 25% in all experimental conditions and among proposers and responders (Figure S6). We also measured expectations with a survey question asking what participants expected to receive as a payoff (Figure S7), though it is not clear whether the participants interpreted this question as either total payoff (UG earnings + \$0.25 participation fee) or UG earnings alone. Perhaps more importantly, we asked participants if they thought that the outcome of the experiment was fair. Any glaringly high rates of dissatisfaction after, e.g., a treatment condition or solely among proposers or responders could have reflected any unfair framing practices or unintentional confusion in our vignette approach. We find that participants were not dissatisfied on average across roles any of the control nor treatment conditions, nor were the proposers or responders uniquely dissatisfied in any particular condition (Figure S8, Table S3).
 
