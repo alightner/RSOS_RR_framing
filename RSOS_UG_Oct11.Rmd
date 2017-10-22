@@ -107,7 +107,7 @@ The pilot study results (previously discussed) informed our experimental design 
 grid.arrange(plot_pilot, plot_final)
 ```
 
-**Figure 12.** Distriubtion of offers in the pilot data (top row) and final study (bottom row). Study instructions were tweaked following the pilot study, which appeared to reduce low offers in the banker condition in the final study. The windfall condition is omitted in this figure because it did not have a corresponding pilot condition.
+**Figure 12.** Distribution of offers in the pilot data (top row) and final study (bottom row). Study instructions were tweaked following the pilot study, which appeared to reduce low offers in the banker condition in the final study. The windfall condition is omitted in this figure because it did not have a corresponding pilot condition.
 
 ## Exploratory analyses
 
