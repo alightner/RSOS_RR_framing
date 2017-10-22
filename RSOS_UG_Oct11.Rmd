@@ -115,7 +115,12 @@ We conducted exploratory analyses on both our pilot data and study data. Because
 
 **[CAN WE COMPARE SURVEY ATTRITION RATES IN PILOT VS FINAL?]**
 
-We retained the other exploratory measures noted in the Methods. Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. 
+We retained the other exploratory measures noted in the Methods. 
+
+**I think we should report two or three basic analyses here (with details in the supplement), e.g., did expected payoffs influence reject decisions? did previous experience with the UG influence offers or acceptances? Where emotional responses predicted by offers (for responders) and acceptances (for proposers)?**
+
+<!--
+Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. -->
 
 
 
@@ -133,7 +138,7 @@ plot_effect_sizes
 
 Using our *a priori* exclusion criteria, we omitted data from `r signif(omitperc,3)`% of participants who made an offer in the UG. It is therefore important to assess how the excluded offers differed from the included offers. Figure 6 depicts the distributions of offers of excluded vs. included participants, revealing a large difference between them only in the control and windfall conditions: `r 100*signif(in50, 2)`% of the included participants offered 50% and only `r 100*signif(in0, 2)`% offered 0%; in contrast, `r 100*signif(out50, 2)`% of excluded participants offered 50% and `r 100*signif(out0, 2)`% offered 0%). 
 
-These differences had only a marginal impact on our main results. We fitted a model of offers by condition that included all participants (N = 770 instead of N = 472). Results were nearly identical to those depicted in Table 2 and Figure 7. We also fitted a model with an additional variable that indicated excluded status. The main effect of condition was still highly significant, there was no significant main effect of exclusion on offers, and there was only a marginally significant exclusion X condition interaction (`r p.function(m_included_excluded_pvalue)`). We do not have a good explanation for the propensity of excluded participants to offer 0% in the control and windfall conditions. Many control and windfall participants who opted out immediately after the game/before the survey had low offers and high rejection rates (`r signif(quitrej,3)`% rejected, mean = `r signif(quitoffer,3)`%), and most others were excluded for their failure to pass attention checks. 
+These differences had only a marginal impact on our main results. We fitted a model of offers by condition that included all participants (N = `r nobs(m_included_excluded)` instead of N = `r nrow(UG.data)`). Results were nearly identical to those depicted in Table 2 and Figure 7. We also fitted a model with an additional variable that indicated excluded status. The main effect of condition was still highly significant, there was no significant main effect of exclusion on offers, and there was only a marginally significant exclusion X condition interaction (`r p.function(m_included_excluded_pvalue)`), probably due to the windfall condition (see Figure S1). We do not have a good explanation for the propensity of excluded participants to offer 0% in the control and windfall conditions. Many control and windfall participants who opted out immediately after the game/before the survey had low offers and high rejection rates (`r signif(quitrej,3)`% rejected, mean = `r signif(quitoffer,3)`%), and most others were excluded for their failure to pass attention checks. 
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 plot(allEffects(m_included_excluded), main='', ylab='offer')
