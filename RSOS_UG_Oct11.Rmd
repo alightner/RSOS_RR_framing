@@ -3,406 +3,145 @@ title: Radical framing effects in the ultimatum game (Experimental Results, Disc
   and Supplementary Materials)
 author: "Aaron D. Lightner, Pat Barclay, Edward H. Hagen"
 output:
-  word_document: default
   html_document: default
+  word_document: default
+bibliography: RSOS_pt2_refs.bib
 csl: vancouver.csl
 ---
 
+```{r, echo=F, warning=F, message=F}
+source('results.R')
+```
+
+
 ## Results
 
-```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-library(devtools)
-library(tidyverse)
-library(car)
-library(effsize)
-library(lawstat)
-library(readr)
-library(knitr)
-library(reshape2)
-library(ggmosaic)
-library(effects)
-library(gamlss.mx)
-library(arm)
-library(reshape2)
-library(Rmixmod)
-library(multcomp)
-library(binomTools)
-library(gridExtra)
-library(broom)
-library(AICcmodavg)
-library(diagram)
-library(visreg)
-library(viridis)
-install_github('alightner/framingdata2017')
-library(framingdata2017)
-install_github('alightner/dataAMT2017')
-library(dataAMT2017)
-#load("~/Desktop/Docs/RSOS data AMT/dataAMT2017/data/UG.data.rda")
-df <- dataAMT2017::UG.data
-df$offer[df$condition=='control' | df$condition=='windfall'] <- 
-  df$offer[df$condition=='control' | df$condition=='windfall'] * 100
-
-df$condition <- factor(df$condition, levels=c('banker', 'control', 
-                                              'windfall', 'customer'))
-
-#load("~/Desktop/Docs/RSOS data AMT/dataAMT2017/data/UG.preatt.rda")
-#load("~/Desktop/Docs/RSOS data AMT/dataAMT2017/data/UG.presurv.rda")
-
-dfpa <- dataAMT2017::UG.preatt
-dfps <- dataAMT2017::UG.presurv
-dfps$offer[dfps$condition=='control' | dfps$condition=='windfall'] <- 
-  dfps$offer[dfps$condition=='control' | dfps$condition=='windfall'] * 100
-
-dfps$condition <- factor(dfps$condition, levels=c('banker', 'control', 
-                                              'windfall', 'customer'))
-
-
-
-## p value reporting function
-p.function <- function(p) {
-  if (p >= 0.001) {
-    paste(c("p =", signif(p,3)), collapse = " ")
-  } else {
-    c("p < 0.001")
-  }
-}
-
-
-```
-
-Following our *a priori* criteria, and before analyzing the experimental results, participants were excluded if they did not complete the survey, which was determined by a failure to correctly enter a unique validation code at the end of the survey. This was only attainable if a participant correctly answered two other attention check questions during the task, prior to reaching the validation code. These exclusionary criteria were set out to remove participants less likely to be attentive from analyses. In addition, many other participants left the study beforehand (e.g., while the game was loading or after viewing the consent form - see Figure 5 for attrition data). There did not appear to be a marked change in offer trends between the excluded participants who played the UG (but did not complete the survey) and the analyzed participants who completed the entire study (Figure 6). We refer to the condition with proposers in the banker role as the “banker condition”, and the condition with proposers in the customer role as the “customer condition”.
-
-
-```{r echo=FALSE, warning=FALSE}
-#sd(df$offer[df$condition=='control'])
-#sd(df$offer[df$condition=='windfall'])
-a <- c(df$offer[df$condition=='control' & df$playerid==1], df$offer[df$condition=='windfall' & df$playerid==1])
-b <- c(rep(1, length(df$offer[df$condition=='control' & df$playerid==1])), 
-       rep(2, length(df$offer[df$condition=='windfall' & df$playerid==1])))
-lv <- leveneTest(a,b)
-lvF <- lv$`F value`[1]
-lvP <- lv$`Pr(>F)`[1]
-flig <- fligner.test(a,b)
-
-shap1 <- shapiro.test(df$offer[df$condition=='banker' & df$playerid==1])
-shap2 <- shapiro.test(df$offer[df$condition=='customer' & df$playerid==1])
-shap3 <- shapiro.test(df$offer[df$condition=='windfall' & df$playerid==1])
-shap4 <- shapiro.test(df$offer[df$condition=='control' & df$playerid==1])
-
-k <- kruskal.test(df$offer[ df$playerid==1] ~ df$condition[ df$playerid==1])
-
-a1 <- wilcox.test(df$offer[df$condition=='control' & df$playerid==1], df$offer[df$condition=='banker' & df$playerid==1])
-a2 <- wilcox.test(df$offer[df$condition=='control' & df$playerid==1], df$offer[df$condition=='customer' & df$playerid==1])
-
-m <- lm(offer ~ condition, data=subset(df, playerid==1))
-ao <- Anova(m)
-aoF <- ao$`F value`[1]
-aoP <- ao$`Pr(>F)`[1]
-
-t1 <- t.test(df$offer[df$condition=='control'], 
-             df$offer[df$condition=='banker'])
-t2 <- t.test(df$offer[df$condition=='control'], 
-             df$offer[df$condition=='customer'])
-
-
-akg1 <- c(df$offer[df$condition=='control' & df$playerid==1],
-       df$offer[df$condition=='banker' & df$playerid==1])
-akg2 <- c(df$offer[df$condition=='control' & df$playerid==1],
-        df$offer[df$condition=='customer' & df$playerid==1])
-groups_1 <- as.factor(c(rep(1, length(df$offer[df$condition=='control' & 
-                                                df$playerid==1])), 
-                       rep(2, length(df$offer[df$condition=='banker' & 
-                                                df$playerid==1]))))
-groups_2 <- as.factor(c(rep(1, length(df$offer[df$condition=='control' & 
-                                                df$playerid==1])), 
-                       rep(2, length(df$offer[df$condition=='customer' & 
-                                                df$playerid==1]))))
-cliff.bank <- cliff.delta(akg1, groups_1)
-cliff.cust <- cliff.delta(akg2, groups_2)
-cohen.bank <- cohen.d(akg1, groups_1)
-cohen.cust <- cohen.d(akg2, groups_2)
-```
+We aimed to collect 60 pairs of participants in each of 4 conditions for a total N = 480. Based on our experience with attrition in our pilot study, we therefore recruited about 70 pairs of participants per condition. Following our *a priori* criteria, and before analyzing the data, participants were excluded if they did not complete the survey, which was determined by a failure to correctly enter a unique validation code at the end of the survey. This was only attainable if a participant correctly answered two attention check questions during the task, prior to reaching the validation code. These three exclusionary criteria were set out to remove from analyses participants less likely to be attentive. We also initially planned to exclude participants who finished the study too quickly (suggesting low attention), as seen in several participants in the pilot study, but because we were able to shorten the final study, that criterion did not apply to any participant. In addition, many other participants left the study beforehand, e.g., while the game was loading or after viewing the consent form (see Figure 5). After exclusions, we had a final sample of N = `r nrow(UG.data)`. We did not make any decisions on sample size based on observing the data.
 
 ```{r,echo=FALSE, fig.width=7, fig.height=5, fig.show='hold',fig.align='center'}
 
-phases <- c("Viewed consent form", "Played UG", "Started survey", "Completed survey\nand attention checks")
-dff <- data.frame("Studyphase" = factor(phases, levels = phases), "Number" = c(1040, 770, 552, 472))
-ggplot(dff, aes(x=Studyphase, y=Number)) + geom_bar(stat='identity') +
-     geom_text(aes(x=Studyphase, label=Number), size=3.25, vjust=-1) +
-     labs(x='Study phase') + coord_cartesian(ylim=c(0,1250))
+plot_attrition
 
 ```
 
-**Figure 5.** Bar chart representing number of participants during each study phase. Individuals who completed the survey and attention checks were included in our sample (N=472) for analysis.
+**Figure 5.** Number of participants during each study phase. Individuals who completed the survey and attention checks (N=`r nrow(UG.data)`) comprised our "included"" sample for analysis.
 
+Participants in our final sample included `r signif(nUS, 2)`% from the U.S., `r signif(nIN, 2)`% from India, `r signif(nOther,3)`% from various other regions (e.g., Europe, South America, Africa, Australia, North America non-U.S., Asia non-India), and `r signif(nUnsp, 2)`% unspecified or ambiguous responses. Participant ages ranged from `r signif(min.age, 2)` to `r signif(max.age, 2)` (mean = `r signif(mean.age, 2)`, SD = `r signif(sd.age, 2)`), with `r signif(male, 2)`% male and `r signif(female, 2)`% female. Based on Likert score responses, participants commonly lacked extensive experience with currency exchange (scale of 1-5 with 1 = no experience and 5 = extensive experience: mean = `r signif(ce1, 2)`, SD = `r signif(ce2, 2)`) and international travel (mean = `r signif(ce3, 2)`, SD = `r signif(ce4, 2)`). See Figures S4 and S5.
+
+We refer to the condition with proposers in the banker role as the “banker condition”, and the condition with proposers in the customer role as the “customer condition”. In the banker and customer conditions, there did not appear to be a marked difference in the distribution of offers between the excluded participants who played the UG (but did not complete the survey) and the analyzed participants who completed the entire study (Figure 6). 
 
 ```{r echo=FALSE, warning=FALSE, fig.align='center', fig.width=10}
-mps <- df$userid
-
-p1 <- ggplot(data=subset(dfps, playerid==1 & !(is.na(offer)) & !(userid %in% mps)), aes(x=offer)) + geom_histogram(binwidth = 5) +
-  facet_wrap(~condition, ncol=4) + coord_cartesian(ylim=c(0,55)) + labs(x='')
-
-p2 <- ggplot(data=subset(df, playerid==1), aes(x=offer)) + geom_histogram(binwidth = 5) +
-  facet_wrap(~condition, ncol=4) + coord_cartesian(ylim=c(0,55)) + labs(x='Offer (%)')
-
 grid.arrange(p1,p2)
 ```
 
-**Figure 6.** Histogram of proposers' offers by condition, with offers of excluded participants on the top row and offers of included participants on the bottom row.
+**Figure 6.** Distribution of proposers' offers by condition. Top row: offers of excluded participants. Bottom row: offers of included participants.
 
-
-The biggest differences between offers from excluded vs. included participants were in the windfall condition, where almost all excluded participants offered 0% but almost all included participants offered 50%, and in the control condition, where more excluded participants offered 0% than 50% but almost all included participants offered 50%. Other interesting differences included that in the banker condition, a greater fraction of offers from excluded participants were either 0% or 100% compared to offers from included participants, and that in the customer condition a greater fraction of offers from excluded participants were either 0% or 50% compared to included participants. Henceforth, unless explicitly noted, all analyses will be of data from included participants only.
+There was a large difference in the distribution of offers from excluded vs. included participants  in the windfall condition, however, where almost all excluded participants offered 0% but almost all included participants offered 50%, and also in the control condition, where more excluded participants offered 0% than 50% but almost all included participants offered 50%. Other interesting differences included that in the banker condition, a greater fraction of offers from excluded participants were either 0% or 100% compared to offers from included participants, and that in the customer condition a greater fraction of offers from excluded participants were either 0% or 50% compared to included participants. Henceforth, unless explicitly noted, all analyses will be of data from included participants only.
 
 In our experiment, the central tendency differences between treatment and control conditions were significant and conformed to our predictions, with offers in the banker condition (mean = `r signif(mean(df$offer[df$condition=='banker']),3)`, SD = `r signif(sd(df$offer[df$condition=='banker']),3)`) significantly higher than the control condition (mean = `r signif(mean(df$offer[df$condition=='control']),3)`, SD = `r signif(sd(df$offer[df$condition=='control']),3)`, t = `r signif(t1$statistic,3)`, `r p.function(t1$p.value)`, Cohen's d = `r signif(cohen.bank$estimate,3)`) and offers in the customer condition (mean = `r signif(mean(df$offer[df$condition=='customer']),3)`, SD = `r signif(sd(df$offer[df$condition=='customer']),3)`) significantly lower than the control condition (t = `r signif(t2$statistic,3)`, `r p.function(t2$p.value)`, Cohen's d = `r signif(cohen.cust$estimate,3)`). See Table 2 and Figure 7.
 
 ```{r echo=FALSE, warning=FALSE}
-dt <- df
-dt$offer <- dt$offer/100
-dt$condition <- factor(dt$condition, levels=c('control', 'banker', 
-                                                 'windfall', 'customer'))
-m <- glm(offer ~ condition, family=binomial, subset(dt, playerid==1))
-x <- tidy(m)
-kable(x, digits = 3, caption = 'Table 2. Logistic regression of mean offers by condition.')
+tmp <- tidy(m_offers)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table 2. Logistic regression model of mean offers by condition. Estimates are log odds. The base condition is the banker condition. See Figure 7 for an effects plot.')
 ```
 
 
 ```{r echo=FALSE, warning=FALSE}
-dt <- df
-dt$offer <- dt$offer/100
-dt$condition <- factor(dt$condition, levels=c('banker', 'control', 
-                                                 'windfall', 'customer'))
-m <- glm(offer ~ condition, family=binomial, subset(dt, playerid==1))
-plot(allEffects(m), main='')
+plot(allEffects(m_offers), main='')
 ```
 
-**Figure 7.** Generalized linear model of the mean offer (as a proportion of the maximum possible offer) by condition. Bars indicate +/- 2 SE. See text for details.
+**Figure 7.** Effect plot of the mean offer (as a proportion of the maximum possible offer) by condition. Bars indicate +/- 2 SE. Model coefficients are in Table 2. See text for details.
 
 
 The data in each condition were not normally distributed (Shipiro Wilk: banker W = `r signif(shap1$statistic, 3)`, `r p.function(shap1$p.value)`; customer W = `r signif(shap2$statistic, 3)`, `r p.function(shap2$p.value)`; windfall W = `r signif(shap3$statistic, 3)`, `r p.function(shap3$p.value)`; control W = `r signif(shap4$statistic, 3)`, `r p.function(shap4$p.value)`). As stipulated in our *a priori* statistical analyses section we therefore also tested for differences in offers using a non-parametric Kruskal-Wallis rank sum test  ($\chi^2$ = `r signif(k$statistic, 3)`, `r p.function(k$p.value)`). Likewise, pairwise median differences between banker and control conditions (banker median = `r signif(median(df$offer[df$condition=='banker']),3)`, control median = `r signif(median(df$offer[df$condition=='control']),3)`) and customer and control conditions (customer median = `r signif(median(df$offer[df$condition=='customer']),3)`) were re-tested to confirm that our predictions were supported for both banker and customer conditions (banker-control Mann-Whitney U = `r signif(a1$statistic,3)`, `r p.function(a1$p.value)`, and Cliff's Delta = `r signif(cliff.bank$estimate,3)`; customer-control U = `r signif(a2$statistic,3)`, `r p.function(a2$p.value)`, and Cliff's Delta = `r signif(cliff.cust$estimate,3)`).
 
-```{r echo=FALSE, warning=FALSE}
-ar1 <- (mean(df$accept[df$playerid==1 & df$condition=='control']))*100
-ar2 <- (mean(df$accept[df$playerid==1 & df$condition=='windfall']))*100
-fc1 <- (length(df$offer[df$playerid==1 & df$condition=='control' & 
-                  df$offer==50])/
-  length(df$offer[df$playerid==1 & df$condition=='control']))*100
-fc2 <- (length(df$offer[df$playerid==1 & df$condition=='windfall' & 
-                  df$offer==50])/
-  length(df$offer[df$playerid==1 & df$condition=='windfall']))*100
-
-m <- glm(accept ~ condition*offer, family=binomial, subset(df, playerid==2))
-rsq <- Rsq(m)
-```
-
 While the offer variance in the windfall vignette condition was lower than that of the control condition (windfall mean = `r signif(mean(df$offer[df$condition=='windfall']),3)`, SD = `r signif(sd(df$offer[df$condition=='windfall']),3)`, IQR = `r signif(IQR(df$offer[df$condition=='windfall']),3)`; control IQR = `r signif(IQR(df$offer[df$condition=='control']),3)`), this difference was not significant (F = `r signif(lvF, 3)`, `r p.function(lvP)`; $\chi^2$ = `r signif(flig$statistic,3)`, `r p.function(flig$p.value)`) using either equality of variances test (i.e., Brown-Forsythe Levene-type and Fligner-Killeen tests), contrary to predictions. It is worth noting, however, that the portion of "fair splits" (i.e., 50-50 offers) among proposers was `r signif(fc1, 3)`% with an acceptance rate of `r signif(ar1, 3)`% in the control condition, and `r signif(fc2, 3)`% fair splits with an acceptance rate of `r signif(ar2, 3)`% in the windfall condition. 
-
-```{r echo=FALSE, warning=FALSE}
-over90 <- (length(df$offer[df$offer >= 90 & df$condition=='banker' & df$playerid==1])/length(df$offer[df$condition=='banker' & df$playerid==1]))*100  ## 64.9%
-
-hypoacc <- (length(df$accept[df$accept==1 & df$condition=='customer' & df$playerid==2 & df$offer < 50])/length(df$accept[df$condition=='customer' & df$playerid==2 & df$offer < 50]))*100  ## 68.6%
-
-bankrej <- (length(df$accept[df$accept==0 & df$condition=='banker' & df$playerid==2 & df$offer > 50])/length(df$accept[df$condition=='banker' & df$playerid==2 & df$offer > 50]))*100  ## 20.4%
-```
 
 The probability of offer acceptance was modeled using a logistic regression (Table 3 and Figure 8). The probability of offer acceptance was low for small offers, and increased sharply in the control and windfall conditions as a function of offer amount. The customer and banker conditions had "flatter" acceptance probabilities across offer amounts. Tjur's coefficient of discrimination, a measure of fit, was D = `r signif(rsq$D, 3)`. Inspection of the distribution of probabilities for true rejections (Figure 9, top) and true acceptances (Figure 9, bottom) indicated that our model was reasonably good at predicting acceptances but poor at predicting rejections. Overall, the responders' acceptance criteria aligned with our predictions: in the control and windfall conditions, responders largely accepted fair 50-50 splits with some tolerance for "hypo-fair" (i.e., < 50%) offers, but most of the latter were rejected. In the banker condition, `r signif(over90, 3)`% of participants offered 90% or more of their allocation, with modes at 90% (n = 13) and 95% (n = 12). When bankers were responders (in the customer condition), `r signif(hypoacc, 3)`% accepted hypo-fair offers (those < 50%). Customers in the responder role, on the other hand (in the banker condition), rejected `r signif(bankrej, 3)`% of hyper-fair offers (those > 50%). In the customer condition, most of the acceptances (and rejections) were hypo-fair, while most acceptances *and rejections* in the banker condition were "hyper-fair" (i.e., > 50%) offers (Figure 10). 
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-df$condition <- factor(df$condition, levels=c('control', 'banker', 
-                                                 'windfall', 'customer'))
-m <- glm(accept~offer*condition, family=binomial, data=subset(df, playerid==2))
-x <- tidy(m)
-kable(x, digits = 3, caption = 'Table 3. Logistic regression of responder acceptance probability as a function of offer amount by condition. Coefficients are log odds.')
+tmp <- tidy(m_accept)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table 3. Logistic regression model of responder acceptance probability as a function of offer amount and condition. Coefficients are log odds. For effects plot, see Figure 8.')
 ```
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-visreg(m, xvar='offer', by='condition', scale='response', jitter = TRUE)
+visreg(m_accept, xvar='offer', by='condition', scale='response', jitter = TRUE)
 ```
 
-**Figure 8.** Plot of logistic regression of responders' acceptance probability as a function of offer amount by condition (gray shaded areas indicate 2 SE, rug indicates offers). 
+**Figure 8.** Plot of logistic regression model of responders' acceptance probability as a function of offer amount and condition (gray shaded areas indicate 2 SE, rug indicates offers). Model coefficients are in Table 3.
 
 
 ```{r echo=FALSE, warning=FALSE}
-d2 <- data.frame(piHat=rsq$piHat, y=rsq$Y)
-ggplot(d2, aes(x=piHat)) + geom_histogram(binwidth = 0.025) + facet_wrap(~y, ncol=1) + coord_cartesian(xlim=c(0,1)) +
-  labs(x='Probability(1)')
+plot_accept
 ```
 
 **Figure 9.** Plot of fitted probabilities of acceptance in the logistic model that includes experimental condition and offer amount (Figure 8), for true rejections (top) and true acceptances (bottom). If the logistic model has perfect predictability, then true rejections should cluster at 0 and true acceptances should cluster at 1. This logistic model was better at predicting true acceptances (bottom) than true rejections (top). The coefficient of discrimination (Tjur's D) is the difference in the mean probabilities of true acceptances minus the mean probabilities of true rejections. This measure can be used as a logistic regression analogue to an $R^2$ coefficient of determination [@tjur2009].
 
 
 ```{r echo=FALSE, warning=FALSE}
-df$fairness <- ifelse(df$offer < 50, 'Hypo', 'Fair')
-df$fairness[df$offer > 50] <- 'Hyper'
-df$fairness <- factor(df$fairness, levels = c('Hypo', 'Fair', 'Hyper'))
-#ggplot(d, aes(offer)) + geom_histogram() + facet_grid(accept ~ condition)
-
-#plot(xtabs(~ accept + condition + fairness, data=df), main='')
-ggplot(data=subset(df, playerid==2)) + 
-  geom_mosaic(aes(x=product(accept,condition), fill=factor(fairness))) + 
-  theme(axis.text.x=element_text(angle=-30, hjust= .1)) + 
-  #facet_grid(accept~.) +
-  facet_grid(~condition) +
-  guides(fill=guide_legend(title = "Fairness", reverse = TRUE)) +
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank()) +
-  labs(x="Condition", 
-       y="Reject                                        Accept")
+plot_accept_mosaic
 ```
 
 **Figure 10.** Mosaic plot of frequencies of responders' acceptance and rejection of offers under 50% ("Hypo"), at 50% ("Fair"), and over 50% ("Hyper") by condition.
 
-```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-#load("~/Desktop/Docs/MA Thesis/framingdata2017/data/dataAMT_pilot.rda")
-
-du <- framingdata2017::dataAMT_pilot
-
-a <- du$offer[du$app=='control'& du$playerid==1]
-b <- df$offer[df$condition=='control' & df$playerid==1]
-pexpconmean <- wilcox.test(a,b)
-a <- c(du$offer[du$app=='control'& du$playerid==1], df$offer[df$condition=='control' & df$playerid==1])
-b <- factor(c(rep(1, length(du$offer[du$app=='control'& du$playerid==1])), 
-              rep(2, length(df$offer[df$condition=='control' & df$playerid==1]))))
-c <- leveneTest(a,b)
-pexpconsdF <- c$`F value`[1]
-pexpconsdP <- c$`Pr(>F)`[1]
-###
-a <- du$offer[du$app=='customer'& du$playerid==1]
-b <- df$offer[df$condition=='customer' & df$playerid==1]
-pexpcustmean <- wilcox.test(a,b)
-a <- c(du$offer[du$app=='customer'& du$playerid==1], df$offer[df$condition=='customer' & df$playerid==1])
-b <- factor(c(rep(1, length(du$offer[du$app=='customer'& du$playerid==1])), 
-       rep(2, length(df$offer[df$condition=='customer' & df$playerid==1]))))
-c <- leveneTest(a,b)
-pexpcustsdF <- c$`F value`[1]
-pexpcustsdP <- c$`Pr(>F)`[1]
-###
-a <- du$offer[du$app=='banker'& du$playerid==1]
-b <- df$offer[df$condition=='banker' & df$playerid==1]
-pexpbankmean <- wilcox.test(a,b)
-a <- c(du$offer[du$app=='banker'& du$playerid==1], df$offer[df$condition=='banker' & df$playerid==1])
-b <- factor(c(rep(1, length(du$offer[du$app=='banker'& du$playerid==1])), 
-              rep(2, length(df$offer[df$condition=='banker' & df$playerid==1]))))
-c <- leveneTest(a,b)
-pexpbanksdF <- c$`F value`[1]
-pexpbanksdP <- c$`Pr(>F)`[1]
-
-```
-
 The proposers' low offer amounts in the customer condition and high offer amounts in the banker condition appeared to be fairly consistent overall with their reported fair currency fees. In particular, most proposers in the customer condition both reported that a fair currency fee was a low percentage amount and offered low percentage amounts to the bankers. In the banker condition, most proposers both reported that a fair currency fee was a low percentage amount and offered high percentage amounts to the customers (i.e., kept a small bank fee - see Figure 11). 
 
+This was true even though most participants reported only moderate familiarity with currency exchange. Pilot study results indicated that there was no meaningful difference in behavior between high- and low-experience individuals (see Tables 3 and 4 in the pilot study supplementary materials). We collected perceived fair fees from institutions that are similar to currency exchange (e.g., ATM fees, broker fees, and service charges) because they might be intuited as conceptually similar to bank fees for currency exchange. In the final study, these amounts were all considered to be fair at < 10% (ATM fees: mean = `r signif(atm.mean,3)`%, SD = `r signif(atm.sd,3)`%; broker fees: mean = `r signif(broker.mean,3)`%, SD = `r signif(broker.sd,3)`%; service charges: mean = `r signif(serv.mean,3)`%, SD = `r signif(serv.sd,3)`%; currency exchange fee: mean = `r signif(cfmean,3)`%, SD = `r signif(cfsd,3)`%). Taken together, this could suggest that individuals with little experience with currency exchange overcome their lack of exposure by conceptualizing this scenario as similar to other "banker-customer" situations.
+
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-df$offer2 <- df$offer/100
-df$currencyfee <- df$currencyfee/100
-df$currencyfee[df$condition=='banker'] <- 1 - df$currencyfee[df$condition=='banker']
 
-ggplot(subset(df, playerid==1 & (condition=='banker'| condition=='customer')), aes(x=currencyfee, y=offer2, colour=condition)) + 
-  geom_point(alpha=0.75) + #geom_jitter(height=0.025) + 
-  geom_abline(linetype='dashed') + 
-  scale_colour_viridis(end =0.5, discrete = TRUE) +
-  labs(x='Reported fair currency fee', y='Actual offer')
-
+plot_fair_actual
 
 ```
 
 **Figure 11.** Amount offered (%) among proposers in the banker and customer conditions, as a function of their reported opinions about fair currency fee (%). Conditions are separately represented by color.
 
 
-The pilot study results (previously discussed) informed our experimental design and caused us to slightly adjust our initial predictions and experimental protocol. To explore the effects of changing our protocol between pilot and experiment, we compare and contrast the results of this experiment to those of the pilot. As discussed in both this section and the "Pilot Study" section, we confirmed our predictions with large effect sizes between control and treatment conditions in both the pilot and the experiment. The offers in both (pilot and experiment) control conditions and both customer conditions did not significantly differ in central tendency (control condition: Mann-Whitney U = `r signif(pexpconmean$statistic,3)`, `r p.function(pexpconmean$p.value)`; customer condition: U = `r signif(pexpcustmean$statistic,3)`, `r p.function(pexpcustmean$p.value)`) or variance (control: Brown-Forsythe Levene F = `r signif(pexpconsdF,3)`, `r p.function(pexpconsdP)`; customer: F = `r signif(pexpcustsdF,3)`, `r p.function(pexpcustsdP)`). The banker condition in the experiment, however, yielded higher offers (U = `r signif(pexpbankmean$statistic,3)`, `r p.function(pexpbankmean$p.value)`) with lower offer variance (F = `r signif(pexpbanksdF,3)`, `r p.function(pexpbanksdP)`) than the banker condition in our pilot. The latter had a significantly higher variance than the other conditions in the study, which as discussed, was likely an artifact of confusing instructions (see Pilot Study). These comparisons indicate that the minor adjustments we made to study instructions following the pilot study improved our results (see Figure 12 and and supplementary materials for experimental GAMLSS analyses).
+The pilot study results (previously discussed) informed our experimental design and caused us to slightly adjust our initial predictions and experimental protocol. To explore the effects of changing our protocol between pilot and experiment, we compare and contrast the results of this experiment to those of the pilot. As discussed in both this section and the "Pilot Study" section, we confirmed our predictions with large effect sizes between control and treatment conditions in both the pilot and the experiment. The offers in both (pilot and experiment) control conditions and both customer conditions did not significantly differ in central tendency (control condition: Mann-Whitney U = `r signif(pexpconmean$statistic,3)`, `r p.function(pexpconmean$p.value)`; customer condition: U = `r signif(pexpcustmean$statistic,3)`, `r p.function(pexpcustmean$p.value)`) or variance (control: Brown-Forsythe Levene F = `r signif(pexpconsdF,3)`, `r p.function(pexpconsdP)`; customer: F = $`r signif(pexpcustsdF,2)`$, `r p.function(pexpcustsdP)`). The banker condition in the experiment, however, yielded higher offers (U = `r signif(pexpbankmean$statistic,3)`, `r p.function(pexpbankmean$p.value)`) with lower offer variance (F = `r signif(pexpbanksdF,3)`, `r p.function(pexpbanksdP)`) than the banker condition in our pilot. The latter had a significantly higher variance than the other conditions in the study, which as discussed, was likely an artifact of confusing instructions (see Pilot Study). These comparisons indicate that the minor adjustments we made to study instructions following the pilot study improved our results (see Figure 12 and supplementary materials for experimental GAMLSS analyses).
 
 ```{r echo=FALSE, warning=FALSE}
-p1 <- ggplot(data=subset(du, playerid==1), aes(x=offer)) + geom_histogram(binwidth = 5) +
-  facet_wrap(~app) + labs(x='')
-p2 <- ggplot(data=subset(df, playerid==1 & condition != 'windfall'), aes(x=offer)) + geom_histogram(binwidth = 5) +
-  facet_wrap(~condition) + labs(x='Offer (%)')
-grid.arrange(p1,p2)
+grid.arrange(plot_pilot, plot_final)
 ```
 
-**Figure 12.** Histogram of proposers' offers by condition, with pilot data (top row) and experimental data (bottom row). Study instructions were tweaked following the pilot study. The windfall condition is omitted in this figure because it did not have a corresponding pilot condition.
+**Figure 12.** Distribution of offers in the pilot data (top row) and final study (bottom row). Study instructions were tweaked following the pilot study, which appeared to reduce low offers in the banker condition in the final study. The windfall condition is omitted in this figure because it did not have a corresponding pilot condition.
+
+## Exploratory analyses
+
+We conducted exploratory analyses on both our pilot data and study data. Because participant attrition was a concern (Figure 5 and Phase I supplement), we shortened the study by omitting  exploratory items from the final study when analyses of the pilot data did not reveal strong evidence for theoretically important patterns. In particular, the SVO variable involved 9 items. In the pilot study, individuals classified as “prosocial” according to their SVO score made slightly, but not significantly, larger offers across the three conditions, compared to individuals classified as “individualistic.” As noted in our discussion of pilot study results (Phase I supplement), we would require a much larger sample size to have the power to detect an effect of SVO, if it exists. We therefore omitted the SVO items from the final study. We also omitted the minimum and maximum expected offers, which had little theoretical significance, to further shorten the study.
+
+**[CAN WE COMPARE SURVEY ATTRITION RATES IN PILOT VS FINAL?]**
+
+**I think we should report two or three basic analyses here (with details in the supplement), e.g., did expected payoffs influence reject decisions? did previous experience with the UG influence offers or acceptances? Were emotional responses predicted by offers (for responders) and acceptances (for proposers)?**
+
+We retained the other exploratory measures noted in the Methods. Not surprisingly, participants rated the fairness of the outcome significantly lower when offers were rejected than when offers were accepted (M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==0], na.rm=T), 2)` vs. M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==1], na.rm=T), 2)` on a 1-5 point scale, `r p.function(fairout3p)` by Wilcoxon rank test).
+
+<!--
+Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. -->
 
 
-As stated in the Methods, we had no strong predictions about the variables we planned to collect for exploratory analysis. Our motivation for collecting exploratory variables was to anticipate and, if necessary, explore highly anomalous results that might have arisen. In our experimental protocol, we discarded a number of these measures that were not relevant to our predictions to trim down the survey length, as a result of concerns about high attrition and low attentiveness among participants (as seen in the pilot study). Variables which, after analyzing the pilot data, might have contributed to diminishing returns included SVO survey scores and expected offers with minimum and maximum expected offers. We simplified our survey considerably by omitting these aspects of our pilot study. They yielded little or no effects (see pilot study supplementary materials for a detailed analysis), substantially complicated the survey, and by our estimation, would have likely interfered with participant attentiveness.
-
-We retained our other exploratory measures outlined in the Methods, but had no anomolous results to diagnose with exploratory analyses. Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. 
 
 
 
 ## Discussion
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-
-d.vals <- c(0.33, 0.29, 0.27, 0.49, 0.56,0.46,0.47,0.6,0.35,0.57,
-            0.5,0.5888977,
-            0.6411336,1.09095,2.035155)
-d.inf <- c(0.08, -0.02,0.08,0.18,0.14,0.06,-0.1,0.02,0.01,0.09,
-           0.01,-0.02540322,
-           0.04482694,0.6857637,1.571529)
-d.sup <- c(0.58,0.59,0.45,0.8,0.99,0.86,1.05,1.18, 0.69,1.06,0.98,
-           1.20319868,1.23744036,1.4961360,2.4987)
-frames <- c('Teamwork\n(Spontaneous)','Teamwork vs. Taxes\n(Labeled)',
-            'Teamwork vs. No-teamwork\n(Comprehensive)',
-            'Community vs. Wall Street', 'Giving vs. Taking',
-            'Osotua (Kenya, all)', 'Osotua (Kenya, player 1)',
-            'Osotua (Kenya, player 2)', 'Osotua (U.S., all)', 
-            'Osotua (U.S., player 1)', 'Osotua (U.S., player 2)',
-            'Sovkhoz','Obschina','**Customer','**Banker')
-frames <- factor(frames, levels= sort(frames, decreasing = TRUE))
-Games <- c(rep('Public Goods',4),'Dictator',rep('Trust',6),rep('Public Goods',2), rep('Ultimatum',2))
-d.table <- data.frame(d.vals,d.inf,d.sup,frames,Games)
-d.table <- arrange(d.table, d.vals)
-
-ggplot(d.table, aes(x=frames,y=d.vals)) +
-  geom_point(aes(colour=Games)) +
-  #geom_bar(aes(fill=games),position=position_dodge(0.9),stat="identity") +
-  # geom_hline(yintercept = 0.2, linetype=3) +
-  #geom_hline(yintercept = 0.5, linetype=3) +
- # geom_hline(yintercept = 0.8, linetype=3) +
-  geom_errorbar(aes(ymin=d.inf, ymax=d.sup), width=.2,
-                position=position_dodge(.9)) + 
-  coord_flip() + labs(x='Frames', y='Effect size (|d|)')
-
-## Note: see effect_size_figure_framing.R script in this folder to see computations
+plot_effect_sizes
 ```
 
-**Figure 13.** Effect sizes (absolute values of Cohen's d) from this study (denoted by "**") and a representative sample of previous framing studies. Colors represent game type and bars indicate 95% CI. For reference, d = 0.8 is considered a large by convention.
+**Figure 13.** Effect sizes (absolute values of Cohen's d) from this study (denoted by "**") and a representative sample of previous framing studies. Colors represent game type and bars indicate 95% CI. For reference, d = 0.8 is considered a large effect by convention.
 
+# Supplementary materials (Phase II)
 
+Using our *a priori* exclusion criteria, we omitted data from `r signif(omitperc,3)`% of participants who made an offer in the UG. It is therefore important to assess how the excluded offers differed from the included offers. Figure 6 depicts the distributions of offers of excluded vs. included participants, revealing a large difference between them only in the control and windfall conditions: `r 100*signif(in50, 2)`% of the included participants offered 50% and only `r 100*signif(in0, 2)`% offered 0%; in contrast, `r 100*signif(out50, 2)`% of excluded participants offered 50% and `r 100*signif(out0, 2)`% offered 0%). 
 
-```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-dfps$condition <- factor(dfps$condition, levels=c('control', 'banker',
-                                                  'windfall', 'customer'))
-dfps$excluded <- factor(!(dfps$userid %in% df$userid))
-dfps$offer2 <- dfps$offer/100
-omitperc <- (1 - ((dim(df)[1])/(dim(subset(dfps, !is.na(offer2)))[1])))*100
-```
-
-## Supplementary materials (experimental study)
+These differences had only a marginal impact on our main results. We fitted a model of offers by condition that included all participants (N = `r nobs(m_included_excluded)` instead of N = `r nrow(UG.data)`). Results were nearly identical to those depicted in Table 2 and Figure 7. We also fitted a model with an additional variable that indicated excluded status. The main effect of condition was still highly significant, there was no significant main effect of exclusion on offers, and there was only a marginally significant exclusion X condition interaction (`r p.function(m_included_excluded_pvalue)`), probably due to the windfall condition (see Figure S1). We do not have a good explanation for the propensity of excluded participants to offer 0% in the control and windfall conditions. Many control and windfall participants who opted out immediately after the game/before the survey had low offers and high rejection rates (`r signif(quitrej,3)`% rejected, mean = `r signif(quitoffer,3)`%), and most others were excluded for their failure to pass attention checks. 
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-m <- glm(offer2 ~ condition*excluded, family=binomial, data=dfps)
-m1 <- Anova(m, 3)
-m1p <- (m1$`Pr(>Chisq)`)[3]
-
-in50 <- length(df$offer[df$playerid==1 & df$offer==50 & (df$condition=='control' | df$condition=='windfall')])/length(df$offer[df$playerid==1 & (df$condition=='control' | df$condition=='windfall')])  ## 79.1%
-
-in0 <- length(df$offer[df$playerid==1 & df$offer==0 & (df$condition=='control' | df$condition=='windfall')])/length(df$offer[df$playerid==1 & (df$condition=='control' | df$condition=='windfall')])  ## 7.0%
-
-out50 <- length(na.omit(dfps$offer[dfps$playerid==1 & dfps$excluded==TRUE & dfps$offer==50 & (dfps$condition=='control' | dfps$condition=='windfall')]))/length(na.omit(dfps$offer[dfps$playerid==1 & dfps$excluded==TRUE & (dfps$condition=='control' | dfps$condition=='windfall')]))  ## 21.4%
-
-out0 <- length(na.omit(dfps$offer[dfps$playerid==1 & dfps$excluded==TRUE & dfps$offer==0 & (dfps$condition=='control' | dfps$condition=='windfall')]))/length(na.omit(dfps$offer[dfps$playerid==1 & dfps$excluded==TRUE & (dfps$condition=='control' | dfps$condition=='windfall')]))  ## 60%
-
-
-quit <- subset(dfps, !(userid %in% dfpa$userid) & 
-                 excluded==TRUE & 
-                 (condition=='control' | condition=='windfall'))
-quitrej <- (1 - sum(quit$accept, na.rm=TRUE)/length(na.omit(quit$accept)))*100
-quitoffer <- mean(quit$offer, na.rm=TRUE)
-```
-
-Using our *a priori* exclusion criteria, we omitted data from `r signif(omitperc,3)`% of participants who made an offer in the UG. It is therefore important to assess how the excluded offers differed from the included offers. Figure 6 depicts the distributions of excluded offers in each condition vs. included offers. By visual inspection, the distributions of offers in the banker (left) and customer (right) conditions were fairly similar in excluded (top) and included (bottom) participants. The distributions in the control and windfall conditions, however, were quite different. Included participants almost always offered 50% in both of these conditions, whereas excluded participants often offered 0% (specifically, in these two conditions, `r signif(in50,3)`% of the included participants offered 50% and only `r signif(in0,3)`% offered 0%; in contrast, `r signif(out50,3)`% of excluded participants offered 50% and `r signif(out0,3)`% offered 0%). These differences had only a marginal impact on our main results. We fitted a model of offers by condition that included all participants (N = 770 instead of N = 472). Results were nearly identical to those depicted in Table 2 and Figure 7. We also fitted a model with an additional variable that indicated excluded status. The main effect of condition was still highly significant, there was no significant main effect of exclusion on offers, and there was only a marginally significant exclusion X condition interaction (`r p.function(m1p)`). We do not have a good explanation for the propensity of excluded participants to offer 0% in the control and windfall conditions. Many control and windfall participants who opted out immediately after the game/before the survey had low offers and high rejection rates (`r signif(quitrej,3)`% rejected, mean = `r signif(quitoffer,3)`%), and most others were excluded for their failure to pass attention checks. 
-
-```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
-plot(allEffects(m), main='', ylab='offer')
+plot(allEffects(m_included_excluded), main='', ylab='offer')
 #Anova(m, 3)
 #summary(m)
 ```
@@ -411,15 +150,16 @@ plot(allEffects(m), main='', ylab='offer')
 
 
 ```{r echo=FALSE, warning=FALSE}
-#m1 <- Anova(m, 3)
-x <- tidy(m1)
-kable(x, digits = 3, caption = 'Table S1. ANOVA results for condition X excluded results.')
+tmp <- tidy(m_included_excluded_anova)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table S1. ANOVA results for condition X excluded results.')
 ```
 
 
 ```{r echo=FALSE, warning=FALSE}
-x <- tidy(m)
-kable(x, digits = 3, caption = 'Table S2. Summary results for condition X excluded results.')
+tmp <- tidy(m_included_excluded)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table S2. Summary results for condition X excluded results.')
 ```
 
 
@@ -440,54 +180,7 @@ ggplot(subset(df, (condition=='control' | condition=='windfall') &
 **Figure S3.** Histograms of offer amounts in the control and windfall conditions by condition and responders' acceptance status (1 = accepted, 0 = rejected). 
 
 
-### Exploratory measures
-
-```{r echo=FALSE, warning=FALSE}
-# nationality (after coding responses)
-nUS <- (314/472)*100; nIN <- (49/472)*100  # nEUR <- (18/472)*100
-#nOther <- (22/472)*100; 
-nUnsp <- (69/472)*100; nOther <- (40/472)*100
-# Demographics
-mean.age <- mean(df$age, na.rm=TRUE)
-sd.age <- sd(df$age, na.rm=TRUE)
-min.age <- min(df$age, na.rm = TRUE) 
-max.age <- max(df$age, na.rm = TRUE)
-#table(df$gender, useNA = 'ifany')
-male <- (254/468)*100
-female <- (214/468)*100
-
-### beliefs and expectations #########
-
-dc <- dataAMT2017::UG.data
-cfmean <- (mean(dc$currencyfee))
-cfsd <- (sd(dc$currencyfee))
-#cfsup <- cfmean + (sd(df$currencyfee))*100
-broker.mean <- (mean(dc$brokerfee))
-broker.sd <- (sd(dc$brokerfee))
-serv.mean <- (mean(dc$servicefee))
-serv.sd <- (sd(dc$servicefee))
-atm.mean <- (mean(dc$ATMfee))
-atm.sd <- (sd(dc$ATMfee))
-
-# "I thought the outcome was fair"
-d.temp <- df
-d.temp$fairoutcome <- as.integer(d.temp$fairoutcome)
-fairout1 <- mean(d.temp$fairoutcome)
-fairout2 <- sd(d.temp$fairoutcome)
-# "experience with currency conversion"
-d.temp$forex_exp <- as.integer(d.temp$forex_exp)
-ce1 <- mean(d.temp$forex_exp)
-ce2 <- sd(d.temp$forex_exp)
-# "experience with international travel"
-d.temp$travel_exp <- as.integer(d.temp$travel_exp)
-ce3 <- mean(d.temp$travel_exp)
-ce4 <- sd(d.temp$travel_exp)
-# "did you recognize this as a bargaining game from previous experience?"
-p.recUG <- (length(df$recognizeUG[df$recognizeUG=='Yes'])/length(df$recognizeUG))*100
-
-```
-
-Basic demographic information was collected from the participants in our analyzed sample, which included `r signif(nUS,3)`% from the U.S., `r signif(nIN,3)`% from India, `r signif(nOther,3)`% from various other regions (e.g., Europe, South America, Africa, Australia, North America non-U.S., Asia non-India), and `r signif(nUnsp,3)`% unspecified or ambiguous responses. Participant ages ranged from `r signif(min.age,3)` to `r signif(max.age,3)` (mean = `r signif(mean.age, 3)`, SD = `r signif(sd.age, 3)`), with `r signif(male, 3)`% male and `r signif(female, 3)`% female. Based on Likert score responses, participants commonly lacked extensive experience with currency exchange (scale of 1-5 with 1 = no experience and 5 = extensive experience: mean = `r signif(ce1, 3)`, SD = `r signif(ce2, 3)`) and international travel (mean = `r signif(ce3, 3)`, SD = `r signif(ce4, 3)`). See Figures S4 and S5. The pilot study suggested that there was no meaningful difference in behavior between high- and low-experience individuals (see Tables 3 and 4 in the pilot study supplementary materials). We also collected responses from similar institutions as a diagnostic (e.g., ATM fees, broker fees, and service charges) because they might be intuited as conceptually similar to bank fees for currency exchange). These amounts were all considered to be fair at < 10% (ATM fees: mean = `r signif(atm.mean,3)`, SD = `r signif(atm.sd,3)`; broker fees: mean = `r signif(broker.mean,3)`, SD = `r signif(broker.sd,3)`; service charges: mean = `r signif(serv.mean,3)`, SD = `r signif(serv.sd,3)`; currency exchange fee: mean = `r signif(cfmean,3)`, SD = `r signif(cfsd,3)`). Taken together, this could suggest that low-experience individuals overcome a lack of exposure to currency exchange by conceptualizing this scenario as another (similar) "banker-customer" scenario.
+## Exploratory measures
 
 A potentially useful diagnostic measure was a survey question asking participants if they recognized the game as a bargaining game from previous experience. Overall, `r signif(p.recUG,3)`% of participants recognized the UG, and this number was > 25% in all experimental conditions and among proposers and responders (Figure S6). We also measured expectations with a survey question asking what participants expected to receive as a payoff (Figure S7), though it is not clear whether the participants interpreted this question as either total payoff (UG earnings + \$0.25 participation fee) or UG earnings alone. Perhaps more importantly, we asked participants if they thought that the outcome of the experiment was fair. Any glaringly high rates of dissatisfaction after, e.g., a treatment condition or solely among proposers or responders could have reflected any unfair framing practices or unintentional confusion in our vignette approach. We find that participants were not dissatisfied on average across roles any of the control nor treatment conditions, nor were the proposers or responders uniquely dissatisfied in any particular condition (Figure S8, Table S3).
 
@@ -551,42 +244,7 @@ ggplot(d.temp, aes(x=fairoutcome)) + stat_count() +
 
 
 ```{r echo=FALSE, warning=FALSE}
-m1 <- mean(d.temp$fairoutcome)
-m2 <- mean(d.temp$fairoutcome[d.temp$playerid==1])
-m3 <- mean(d.temp$fairoutcome[d.temp$playerid==2])
-m4 <- mean(d.temp$fairoutcome[d.temp$condition=='control' & d.temp$playerid==1])
-m5 <- mean(d.temp$fairoutcome[d.temp$condition=='control' & d.temp$playerid==2])
-m6 <- mean(d.temp$fairoutcome[d.temp$condition=='windfall' & d.temp$playerid==1])
-m7 <- mean(d.temp$fairoutcome[d.temp$condition=='windfall' & d.temp$playerid==2])
-m8 <- mean(d.temp$fairoutcome[d.temp$condition=='customer' & d.temp$playerid==1])
-m9 <- mean(d.temp$fairoutcome[d.temp$condition=='customer' & d.temp$playerid==2])
-m10 <- mean(d.temp$fairoutcome[d.temp$condition=='banker' & d.temp$playerid==1])
-m11 <- mean(d.temp$fairoutcome[d.temp$condition=='banker' & d.temp$playerid==2])
-
-s1 <- sd(d.temp$fairoutcome)
-s2 <- sd(d.temp$fairoutcome[d.temp$playerid==1])
-s3 <- sd(d.temp$fairoutcome[d.temp$playerid==2])
-s4 <- sd(d.temp$fairoutcome[d.temp$condition=='control' & d.temp$playerid==1])
-s5 <- sd(d.temp$fairoutcome[d.temp$condition=='control' & d.temp$playerid==2])
-s6 <- sd(d.temp$fairoutcome[d.temp$condition=='windfall' & d.temp$playerid==1])
-s7 <- sd(d.temp$fairoutcome[d.temp$condition=='windfall' & d.temp$playerid==2])
-s8 <- sd(d.temp$fairoutcome[d.temp$condition=='customer' & d.temp$playerid==1])
-s9 <- sd(d.temp$fairoutcome[d.temp$condition=='customer' & d.temp$playerid==2])
-s10 <- sd(d.temp$fairoutcome[d.temp$condition=='banker' & d.temp$playerid==1])
-s11 <- sd(d.temp$fairoutcome[d.temp$condition=='banker' & d.temp$playerid==2])
-
-means1 <- c(m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11)
-sd1 <- c(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11)
-name1 <- c('All participants and conditions', 'All conditions - proposers',
-           'All conditions - responders', 'Control - proposers', 
-           'Control - responders', 'Windfall - proposers', 
-           'Windfall - responders', 'Customer - proposers', 
-           'Customer - responders', 'Banker - proposers', 
-           'Banker - responders')
-outdf <- data.frame(name1, means1, sd1)
-#x <- tidy(m)
-colnames(outdf) <- c('Conditions and roles', 'Mean', 'Standard deviation')
-kable(outdf, digits = 3, caption = 'Table S3. Summary results for participant opinions about fairness of game outcomes.')
+kable(outdf, digits = 2, caption = 'Table S3. Summary results for participant opinions about fairness of game outcomes.')
 ```
 
 
