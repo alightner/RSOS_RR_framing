@@ -389,6 +389,25 @@ p.recUG <- (length(df$recognizeUG[df$recognizeUG=='Yes'])/length(df$recognizeUG)
 
 fairout3p <- wilcox.test(fairoutcome ~ accept, d.temp)$p.value
 
+# Difference scores (expect-offer) and accept/reject for player 2
+
+dv <- df
+dv$condition <- factor(dv$condition, levels = c('control', 'banker', 
+                                                'customer', 'windfall'))
+dv$diff_score <- (dv$offerexp - dv$offer2)
+m_diff1 <- glm(accept ~ diff_score, family = binomial, data=subset(dv, playerid==2))
+m_diff1_p <- summary(m_diff1)
+m_diff1_p <- m_diff1_p$coefficients[2,4]
+#visreg(m_diff1, xvar = 'diff_score', scale = 'response')
+m_diff <- glm(accept ~ diff_score*condition, family = binomial, data=subset(dv, playerid==2))
+#summary(m_diff)
+
+# Previous experience with the UG
+
+dv$recognizeUG <- factor(dv$recognizeUG, levels = c('No', 'Yes'))
+m_prevUG <- glm(offer2 ~ condition*recognizeUG, family=binomial, subset(dv, playerid==1))
+m_prevUG_anova <- Anova(m_prevUG, 3)
+m_prevUG_anova_pvalue <- m_prevUG_anova$`Pr(>Chisq)`[3]
 
 ##  ............................................................................
 ##  Summary stats                                                           ####

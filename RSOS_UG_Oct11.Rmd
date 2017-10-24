@@ -26,7 +26,7 @@ plot_attrition
 
 **Figure 5.** Number of participants during each study phase. Individuals who completed the survey and attention checks (N=`r nrow(UG.data)`) comprised our "included"" sample for analysis.
 
-Participants in our final sample included `r signif(nUS, 2)`% from the U.S., `r signif(nIN, 2)`% from India, `r signif(nOther,3)`% from various other regions (e.g., Europe, South America, Africa, Australia, North America non-U.S., Asia non-India), and `r signif(nUnsp, 2)`% unspecified or ambiguous responses. Participant ages ranged from `r signif(min.age, 2)` to `r signif(max.age, 2)` (mean = `r signif(mean.age, 2)`, SD = `r signif(sd.age, 2)`), with `r signif(male, 2)`% male and `r signif(female, 2)`% female. Based on Likert score responses, participants commonly lacked extensive experience with currency exchange (scale of 1-5 with 1 = no experience and 5 = extensive experience: mean = `r signif(ce1, 2)`, SD = `r signif(ce2, 2)`) and international travel (mean = `r signif(ce3, 2)`, SD = `r signif(ce4, 2)`). See Figures S4 and S5.
+Participants in our final sample included `r signif(nUS, 2)`% from the U.S., `r signif(nIN, 2)`% from India, `r signif(nOther,3)`% from various other regions (e.g., Europe, South America, Africa, Australia, North America non-U.S., Asia non-India), and `r signif(nUnsp, 2)`% unspecified or ambiguous responses. Participant ages ranged from `r signif(min.age, 2)` to `r signif(max.age, 2)` (mean = `r signif(mean.age, 2)`, SD = `r signif(sd.age, 2)`), with `r signif(male, 2)`% male and `r signif(female, 2)`% female. Based on Likert score responses, participants commonly lacked extensive experience with currency exchange (scale of 1-5 with 1 = no experience and 5 = extensive experience: mean = `r signif(ce1, 2)`, SD = `r signif(ce2, 2)`) and international travel (mean = `r signif(ce3, 2)`, SD = `r signif(ce4, 2)`). See Figures S5 and S6.
 
 We refer to the condition with proposers in the banker role as the “banker condition”, and the condition with proposers in the customer role as the “customer condition”. In the banker and customer conditions, there did not appear to be a marked difference in the distribution of offers between the excluded participants who played the UG (but did not complete the survey) and the analyzed participants who completed the entire study (Figure 6). 
 
@@ -58,7 +58,7 @@ The data in each condition were not normally distributed (Shipiro Wilk: banker W
 
 While the offer variance in the windfall vignette condition was lower than that of the control condition (windfall mean = `r signif(mean(df$offer[df$condition=='windfall']),3)`, SD = `r signif(sd(df$offer[df$condition=='windfall']),3)`, IQR = `r signif(IQR(df$offer[df$condition=='windfall']),3)`; control IQR = `r signif(IQR(df$offer[df$condition=='control']),3)`), this difference was not significant (F = `r signif(lvF, 3)`, `r p.function(lvP)`; $\chi^2$ = `r signif(flig$statistic,3)`, `r p.function(flig$p.value)`) using either equality of variances test (i.e., Brown-Forsythe Levene-type and Fligner-Killeen tests), contrary to predictions. It is worth noting, however, that the portion of "fair splits" (i.e., 50-50 offers) among proposers was `r signif(fc1, 3)`% with an acceptance rate of `r signif(ar1, 3)`% in the control condition, and `r signif(fc2, 3)`% fair splits with an acceptance rate of `r signif(ar2, 3)`% in the windfall condition. 
 
-The probability of offer acceptance was modeled using a logistic regression (Table 3 and Figure 8). The probability of offer acceptance was low for small offers, and increased sharply in the control and windfall conditions as a function of offer amount. The customer and banker conditions had "flatter" acceptance probabilities across offer amounts. Tjur's coefficient of discrimination, a measure of fit, was D = `r signif(rsq$D, 3)`. Inspection of the distribution of probabilities for true rejections (Figure 9, top) and true acceptances (Figure 9, bottom) indicated that our model was reasonably good at predicting acceptances but poor at predicting rejections. Overall, the responders' acceptance criteria aligned with our predictions: in the control and windfall conditions, responders largely accepted fair 50-50 splits with some tolerance for "hypo-fair" (i.e., < 50%) offers, but most of the latter were rejected. In the banker condition, `r signif(over90, 3)`% of participants offered 90% or more of their allocation, with modes at 90% (n = 13) and 95% (n = 12). When bankers were responders (in the customer condition), `r signif(hypoacc, 3)`% accepted hypo-fair offers (those < 50%). Customers in the responder role, on the other hand (in the banker condition), rejected `r signif(bankrej, 3)`% of hyper-fair offers (those > 50%). In the customer condition, most of the acceptances (and rejections) were hypo-fair, while most acceptances *and rejections* in the banker condition were "hyper-fair" (i.e., > 50%) offers (Figure 10). 
+The probability of offer acceptance was modeled using a logistic regression (Table 3 and Figure 8). The probability of offer acceptance was low for small offers, and increased sharply in the control and windfall conditions as a function of offer amount. The customer and banker conditions had "flatter" acceptance probabilities across offer amounts, although note that the few data points in the high/low offer ranges makes this a dubious distinction. Tjur's coefficient of discrimination, a measure of fit, was D = `r signif(rsq$D, 3)`. Inspection of the distribution of probabilities for true rejections (Figure 9, top) and true acceptances (Figure 9, bottom) indicated that our model was reasonably good at predicting acceptances but poor at predicting rejections. Overall, the responders' acceptance criteria aligned with our predictions: in the control and windfall conditions, responders largely accepted fair 50-50 splits with some tolerance for "hypo-fair" (i.e., < 50%) offers, but most of the latter were rejected. In the banker condition, `r signif(over90, 3)`% of participants offered 90% or more of their allocation, with modes at 90% (n = 13) and 95% (n = 12). When bankers were responders (in the customer condition), `r signif(hypoacc, 3)`% accepted hypo-fair offers (those < 50%). Customers in the responder role, on the other hand (in the banker condition), rejected `r signif(bankrej, 3)`% of hyper-fair offers (those > 50%). In the customer condition, most of the acceptances (and rejections) were hypo-fair, while most acceptances *and rejections* in the banker condition were "hyper-fair" (i.e., > 50%) offers (Figure 10). 
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
@@ -113,11 +113,7 @@ grid.arrange(plot_pilot, plot_final)
 
 We conducted exploratory analyses on both our pilot data and study data. Because participant attrition was a concern (Figure 5 and Phase I supplement), we shortened the study by omitting  exploratory items from the final study when analyses of the pilot data did not reveal strong evidence for theoretically important patterns. In particular, the SVO variable involved 9 items. In the pilot study, individuals classified as “prosocial” according to their SVO score made slightly, but not significantly, larger offers across the three conditions, compared to individuals classified as “individualistic.” As noted in our discussion of pilot study results (Phase I supplement), we would require a much larger sample size to have the power to detect an effect of SVO, if it exists. We therefore omitted the SVO items from the final study. We also omitted the minimum and maximum expected offers, which had little theoretical significance, to further shorten the study.
 
-**[CAN WE COMPARE SURVEY ATTRITION RATES IN PILOT VS FINAL?]**
-
-**I think we should report two or three basic analyses here (with details in the supplement), e.g., did expected payoffs influence reject decisions? did previous experience with the UG influence offers or acceptances? Were emotional responses predicted by offers (for responders) and acceptances (for proposers)?**
-
-We retained the other exploratory measures noted in the Methods. Not surprisingly, participants rated the fairness of the outcome significantly lower when offers were rejected than when offers were accepted (M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==0], na.rm=T), 2)` vs. M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==1], na.rm=T), 2)` on a 1-5 point scale, `r p.function(fairout3p)` by Wilcoxon rank test).
+We retained the other exploratory measures noted in the Methods. Not surprisingly, participants rated the fairness of the outcome significantly lower when offers were rejected than when offers were accepted (M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==0], na.rm=T), 2)` vs. M = `r signif(mean(d.temp$fairoutcome[d.temp$accept==1], na.rm=T), 2)` on a 1-5 point scale, `r p.function(fairout3p)` by Wilcoxon rank test). For responders, the expected payoffs appeared to influence accept/reject decisions. In general, when offers met or exceeded responders' expected payoffs, they were generally inclined to accept, rather than reject (`r p.function(m_diff1_p)`). This effect was less distinct in treatment conditions relative to the control, but this appears to be an artifact of few actual offers below expected offers (i.e., with positive difference scores, where scores = expected payoff - actual offer). Recognition of the UG from previous experience did not have a significant effect on our key findings (`r p.function(m_prevUG_anova_pvalue)`). For details on these results, with additional exploratory analyses, see phase II supplementary materials. 
 
 <!--
 Nonetheless, these measures included standard and fair currency fees, broker fees, service charge fees, and ATM fees, expected payoffs, demographic data, emotional responses to the game, experience with currency exchange transactions, and whether or not the participant recognized the task as a bargaining game from previous experience. We outline these results, with an experimental GAMLSS analysis of our treatment distributions, for the interested reader in the experimental supplementary materials. -->
@@ -182,7 +178,20 @@ ggplot(subset(df, (condition=='control' | condition=='windfall') &
 
 ## Exploratory measures
 
-A potentially useful diagnostic measure was a survey question asking participants if they recognized the game as a bargaining game from previous experience. Overall, `r signif(p.recUG,3)`% of participants recognized the UG, and this number was > 25% in all experimental conditions and among proposers and responders (Figure S6). We also measured expectations with a survey question asking what participants expected to receive as a payoff (Figure S7), though it is not clear whether the participants interpreted this question as either total payoff (UG earnings + \$0.25 participation fee) or UG earnings alone. Perhaps more importantly, we asked participants if they thought that the outcome of the experiment was fair. Any glaringly high rates of dissatisfaction after, e.g., a treatment condition or solely among proposers or responders could have reflected any unfair framing practices or unintentional confusion in our vignette approach. We find that participants were not dissatisfied on average across roles any of the control nor treatment conditions, nor were the proposers or responders uniquely dissatisfied in any particular condition (Figure S8, Table S3).
+Responders' expected payoffs influenced their probability of acceptance, such that offers exceeding expectations (expectation - offer < 0) were more readily accepted than offers below expectations (expectation - offer > 0). This trend was particularly distinct in the control condition, though indistinct trends in the treatment conditions are limited by the fewer offers below expectations (Table S3 and Figure S4). A potentially useful diagnostic measure was a survey question asking participants if they recognized the game as a bargaining game from previous experience. Offer trends among "yes" and "no" responses were not significantly different (Figure S7). Overall, `r signif(p.recUG,3)`% of participants recognized the UG, and this number was < 25% in all experimental conditions and among proposers and responders (Figure S8). We also measured expectations with a survey question asking what participants expected to receive as a payoff (Figure S9), though it is not clear whether the participants interpreted this question as either total payoff (UG earnings + \$0.25 participation fee) or UG earnings alone. Perhaps more importantly, we asked participants if they thought that the outcome of the experiment was fair. Any glaringly high rates of dissatisfaction after, e.g., a treatment condition or solely among proposers or responders could have reflected any unfair framing practices or unintentional confusion in our vignette approach. We find that participants were not dissatisfied on average across roles any of the control nor treatment conditions, nor were the proposers or responders uniquely dissatisfied in any particular condition (Figure S10, Table S5).
+
+```{r echo=FALSE, warning=FALSE}
+tmp <- tidy(m_diff)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table S3. Logistic regression model of difference scores (expected offer minus actual offer) among responders by condition. Estimates are log odds. The base condition is the control condition. See Figure S4 for an effects plot.')
+```
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+visreg(m_diff, xvar='diff_score', by='condition', scale='response', jitter = TRUE, xlab='expectation - offer')
+```
+
+**Figure S4.** Plot of logistic regression model of responders' acceptance probability as a function of difference scores (expected offer minus actual offer) among responders by condition (gray shaded areas indicate 2 SE, rug indicates offers). Model coefficients are in Table S3.
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -193,7 +202,7 @@ ggplot(d.temp, aes(x=forex_exp)) + stat_count() +
 
 ```
 
-**Figure S4.** Likert scale responses to level of experience (1 = no experience at all, 5 = extensive experience) with currency conversion by condition and role (1 = proposer, 2 = responder).
+**Figure S5.** Likert scale responses to level of experience (1 = no experience at all, 5 = extensive experience) with currency conversion by condition and role (1 = proposer, 2 = responder).
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -205,10 +214,20 @@ ggplot(d.temp, aes(x=travel_exp)) + stat_count() +
   facet_grid(playerid~condition)
 ```
 
-**Figure S5.** Likert scale responses to level of experience (1 = no experience at all, 5 = extensive experience) with international travel by condition and role (1 = proposer, 2 = responder).
+**Figure S6.** Likert scale responses to level of experience (1 = no experience at all, 5 = extensive experience) with international travel by condition and role (1 = proposer, 2 = responder).
 
 
+```{r echo=FALSE, warning=FALSE}
+tmp <- tidy(m_diff)
+tmp$p.value <- p.function(tmp$p.value)
+kable(tmp, digits = 2, caption = 'Table S4. Logistic regression model of mean offers by condition and recognition of the UG from previous experience. Estimates are log odds. The base condition is the control condition. See Figure S7 for an effects plot.')
+```
 
+```{r echo=FALSE, warning=FALSE}
+plot(allEffects(m_prevUG), ylab='offer', main='')
+```
+
+**Figure S7.** Effect plot of the mean offer (as a proportion of the maximum possible offer) by condition and recognition of the UG. Bars indicate +/- 2 SE. Model coefficients are in Table S4. See text for details.
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -221,7 +240,7 @@ ggplot(df) +
   labs(x="Condition",y="Frequency")
 ```
 
-**Figure S6.** Frequencies of "yes" vs. "no" responses to the question about whether or not participants recognized the UG from previous experience, by condition and role (1 = proposer, 2 = responder).
+**Figure S8.** Frequencies of "yes" vs. "no" responses to the question about whether or not participants recognized the UG from previous experience, by condition and role (1 = proposer, 2 = responder).
 
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
@@ -232,7 +251,7 @@ ggplot(df, aes(x=offerexp)) + geom_histogram() +
  # facet_wrap(~playerid)
 ```
 
-**Figure S7.** Histogram of responses to the question about what participants expected to receive as a payoff in the task they completed, by condition and role (1 = proposer, 2 = responder).
+**Figure S9.** Histogram of responses to the question about what participants expected to receive as a payoff in the task they completed, by condition and role (1 = proposer, 2 = responder).
 
 
 ```{r echo=FALSE, warning=FALSE}
@@ -240,15 +259,15 @@ ggplot(d.temp, aes(x=fairoutcome)) + stat_count() +
   facet_grid(playerid~condition)
 ```
 
-**Figure S8.** Likert scale responses to the statement that participants thought that the outcome of the game was fair (1 = strongly disagree, 5 = strongly agree) by condition and role (1 = proposer, 2 = responder).
+**Figure S10.** Likert scale responses to the statement that participants thought that the outcome of the game was fair (1 = strongly disagree, 5 = strongly agree) by condition and role (1 = proposer, 2 = responder).
 
 
 ```{r echo=FALSE, warning=FALSE}
-kable(outdf, digits = 2, caption = 'Table S3. Summary results for participant opinions about fairness of game outcomes.')
+kable(outdf, digits = 2, caption = 'Table S5. Summary results for participant opinions about fairness of game outcomes.')
 ```
 
 
-In the pilot study, we used our GAMLSS analyses as a diagnostic to construct mixture models in our widely varying treatment distributions. To be thorough, we include these for the experimental study and note that both treatment conditions consist only of two distribution clusters rather than the problematic three seen in the pilot study (each around our predicted values and a 50-50 offer - see Figures S9 and S10). This is also apparent in the Results section (Figure 11), and we discuss these particular deviations from our predictions at some length in the Discussion section.
+In the pilot study, we used our GAMLSS analyses as a diagnostic to construct mixture models in our widely varying treatment distributions. To be thorough, we include these for the experimental study and note that both treatment conditions consist only of two distribution clusters rather than the problematic three seen in the pilot study (each around our predicted values and a 50-50 offer - see Figures S11 and S12). This is also apparent in the Results section (Figure 11), and we discuss these particular deviations from our predictions at some length in the Discussion section.
 
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
@@ -295,7 +314,7 @@ pdf.plot(
 
 ```
 
-**Figure S9.** Mixture model for offer distribution in banker condition using expectation maximization to determine 2 constitutive distributions (top-bottom: normal: mu = `r signif(invlogit(m$models[[1]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[1]]$sigma.coefficients),3)`; inflated beta: mu = `r signif(invlogit(m$models[[2]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[2]]$sigma.coefficients),3)`, nu = $`r signif(exp(m$models[[2]]$nu.coefficients),3)`$, tau = `r signif(exp(m$models[[2]]$tau.coefficients),3)`).
+**Figure S11.** Mixture model for offer distribution in banker condition using expectation maximization to determine 2 constitutive distributions (top-bottom: normal: mu = `r signif(invlogit(m$models[[1]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[1]]$sigma.coefficients),3)`; inflated beta: mu = `r signif(invlogit(m$models[[2]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[2]]$sigma.coefficients),3)`, nu = $`r signif(exp(m$models[[2]]$nu.coefficients),3)`$, tau = `r signif(exp(m$models[[2]]$tau.coefficients),3)`).
 
 
 
@@ -337,7 +356,7 @@ pdf.plot(
 
 ```
 
-**Figure S10.** Mixture model for offer distribution in customer condition using expectation maximization to determine 2 constitutive distributions (top-bottom: normal: mu = `r signif(invlogit(m$models[[1]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[1]]$sigma.coefficients),3)`; inflated beta: mu = `r signif(invlogit(m$models[[2]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[2]]$sigma.coefficients),3)`, nu = $`r signif(exp(m$models[[2]]$nu.coefficients),3)`$, tau = `r signif(exp(m$models[[2]]$tau.coefficients),3)`).
+**Figure S12.** Mixture model for offer distribution in customer condition using expectation maximization to determine 2 constitutive distributions (top-bottom: normal: mu = `r signif(invlogit(m$models[[1]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[1]]$sigma.coefficients),3)`; inflated beta: mu = `r signif(invlogit(m$models[[2]]$mu.coefficients),3)`, sigma = `r signif(invlogit(m$models[[2]]$sigma.coefficients),3)`, nu = $`r signif(exp(m$models[[2]]$nu.coefficients),3)`$, tau = `r signif(exp(m$models[[2]]$tau.coefficients),3)`).
 
 
 
