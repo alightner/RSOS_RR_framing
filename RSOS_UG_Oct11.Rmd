@@ -16,7 +16,7 @@ source('results.R')
 
 ## Results
 
-We aimed to collect 60 pairs of participants in each of 4 conditions for a total N = 480. Based on our experience with attrition in our pilot study, we therefore recruited about 70 pairs of participants per condition. Following our *a priori* criteria, and before analyzing the data, participants were excluded if they did not complete the survey, which was determined by a failure to correctly enter a unique validation code at the end of the survey. This was only attainable if a participant correctly answered two attention check questions during the task, prior to reaching the validation code. These three exclusionary criteria were set out to remove from analyses participants less likely to be attentive. We also initially planned to exclude participants who finished the study too quickly (suggesting low attention), as seen in several participants in the pilot study, but because we were able to shorten the final study, that criterion did not apply to any participant. In addition, many other participants left the study beforehand, e.g., while the game was loading or after viewing the consent form (see Figure 5). After exclusions, we had a final sample of N = `r nrow(UG.data)`. We did not make any decisions on sample size based on observing the data.
+We aimed to collect 60 pairs of participants in each of 4 conditions for a total N = 480. Based on our experience with attrition in our pilot study, we therefore recruited about 70 pairs of participants per condition. Following our *a priori* criteria, and before analyzing the data, participants were excluded if they did not complete the survey, which was determined by a failure to correctly enter a unique validation code at the end of the survey. This was only attainable if a participant correctly answered two attention check questions during the task, prior to reaching the validation code. These three exclusionary criteria were set out to remove from analyses participants less likely to be attentive. We also initially planned to exclude participants who finished the study too quickly (suggesting low attention), as seen in several participants in the pilot study, but because we were able to shorten the final study, that criterion did not apply to any participant. In addition, many other participants left the study beforehand, e.g., while the game was loading or after viewing the consent form (see Figure 5). After exclusions, we had a final sample of N = `r nrow(UG.data)`. Attention checks were applied separately to proposers and responders, resulting in slightly different numbers of each (proposers = `r sum(df$playerid==1)`; responders = `r sum(df$playerid==2)`). Other than our stated exclusion criteria, we did not make any decisions on sample size based on observing the data.
 
 ```{r,echo=FALSE, fig.width=7, fig.height=5, fig.show='hold',fig.align='center'}
 
@@ -43,7 +43,12 @@ In our experiment, the central tendency differences between treatment and contro
 ```{r echo=FALSE, warning=FALSE}
 tmp <- tidy(m_offers)
 tmp$p.value <- p.function(tmp$p.value)
-kable(tmp, digits = 2, caption = 'Table 2. Logistic regression model of mean offers by condition. Estimates are log odds. The base condition is the banker condition. See Figure 7 for an effects plot.')
+
+sum_offers <- summary(m_offers)
+
+caption <- glue::glue("Table 2. Logistic regression model of mean offers by condition. Estimates are log odds. The base condition is the banker condition. Null deviance: {signif(sum_offers$null.deviance, 3)} on {sum_offers$df.null} degrees of freedom. Residual deviance: {signif(sum_offers$deviance, 3)} on {sum_offers$df.residual} degrees of freedom. See Figure 7 for an effects plot.")
+
+kable(tmp, digits = 2, caption = caption)
 ```
 
 
@@ -64,7 +69,12 @@ The probability of offer acceptance was modeled using a logistic regression (Tab
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 tmp <- tidy(m_accept)
 tmp$p.value <- p.function(tmp$p.value)
-kable(tmp, digits = 2, caption = 'Table 3. Logistic regression model of responder acceptance probability as a function of offer amount and condition. Coefficients are log odds. For effects plot, see Figure 8.')
+
+accept_offers <- summary(m_accept)
+
+caption <- glue::glue("Table 3. Logistic regression model of responder acceptance probability as a function of offer amount and condition. Coefficients are log odds. The base condition is the banker condition. Null deviance: {signif(accept_offers$null.deviance, 3)} on {accept_offers$df.null} degrees of freedom. Residual deviance: {signif(accept_offers$deviance, 3)} on {accept_offers$df.residual} degrees of freedom. See Figure 8 for an effects plot.")
+
+kable(tmp, digits = 2, caption = caption)
 ```
 
 
