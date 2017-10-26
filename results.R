@@ -140,7 +140,7 @@ p1 <- ggplot(data=subset(dfps, playerid==1 & !(is.na(offer)) & !(userid %in% mps
   facet_wrap(~condition, ncol=4) + coord_cartesian(ylim=c(0,55)) + labs(x='')
 
 p2 <- ggplot(data=subset(df, playerid==1), aes(x=offer)) + geom_histogram(binwidth = 5) +
-  facet_wrap(~condition, ncol=4) + coord_cartesian(ylim=c(0,55)) + labs(x='Offer (%)')
+  facet_wrap(~condition, ncol=4) + coord_cartesian(ylim=c(0,55)) + labs(x='\nOffer (%)')
 
 
 #   ____________________________________________________________________________
@@ -199,7 +199,8 @@ df$fairness <- factor(df$fairness, levels = c('Hypo', 'Fair', 'Hyper'))
 plot_accept_mosaic <-
   ggplot(data=subset(df, playerid==2)) + 
   geom_mosaic(aes(x=product(accept,condition), fill=factor(fairness))) + 
-  theme(axis.text.x=element_text(angle=-30, hjust= .1)) + 
+  theme_minimal(15) +
+  theme(axis.text.x=element_text(angle=-30, hjust= .1), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
   #facet_grid(accept~.) +
   facet_grid(~condition) +
   guides(fill=guide_legend(title = "Fairness", reverse = TRUE)) +

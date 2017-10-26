@@ -3,8 +3,8 @@ title: Radical framing effects in the ultimatum game (Experimental Results, Disc
   and Supplementary Materials)
 author: "Aaron D. Lightner, Pat Barclay, Edward H. Hagen"
 output:
-  html_document: default
   word_document: default
+  html_document: default
 bibliography: RSOS_pt2_refs.bib
 csl: vancouver.csl
 ---
@@ -21,6 +21,7 @@ We aimed to collect 60 pairs of participants in each of 4 conditions for a total
 ```{r,echo=FALSE, fig.width=7, fig.height=5, fig.show='hold',fig.align='center'}
 
 plot_attrition
+ggsave('Figures/Figure 5.pdf', plot_attrition + theme_bw(15), height = 6, width = 9)
 
 ```
 
@@ -32,6 +33,8 @@ We refer to the condition with proposers in the banker role as the “banker con
 
 ```{r echo=FALSE, warning=FALSE, fig.align='center', fig.width=10}
 grid.arrange(p1,p2)
+fig6 <- arrangeGrob(p1 + theme_bw(15), p2 + theme_bw(15), nrow = 2)
+ggsave('Figures/Figure 6.pdf', fig6, height = 6, width = 9)
 ```
 
 **Figure 6.** Distribution of proposers' offers by condition. Top row: offers of excluded participants. Bottom row: offers of included participants.
@@ -53,7 +56,14 @@ kable(tmp, digits = 2, caption = caption)
 
 
 ```{r echo=FALSE, warning=FALSE}
-plot(allEffects(m_offers), main='')
+effplot <- visreg(m_offers, scale = 'response', rug = 0, gg = T)
+ggsave('Figures/Figure 7.pdf', 
+       effplot + 
+         scale_y_continuous(limits = c(0, 1)) +
+         labs(x = '\nCondition', y = 'Offer\n') + 
+         theme_bw(15), 
+       height = 6, width = 9
+       )
 ```
 
 **Figure 7.** Effect plot of the mean offer (as a proportion of the maximum possible offer) by condition. Bars indicate +/- 2 SE. Model coefficients are in Table 2. See text for details.
@@ -79,7 +89,14 @@ kable(tmp, digits = 2, caption = caption)
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-visreg(m_accept, xvar='offer', by='condition', scale='response', jitter = TRUE)
+# m_accept <- glm(accept ~ condition*offer, family=binomial, subset(df, playerid==2))
+
+eff_accept <- 
+  visreg(m_accept, xvar='offer', by='condition', scale='response',  plot = F)
+
+plot_eff_accept <- plot(eff_accept, gg=T) + facet_wrap(~condition, ncol = 2) + geom_point(data = df[df$playerid==2,], aes(offer, accept), alpha = .25) + theme_bw(15)
+
+ggsave('Figures/Figure 8.pdf', plot_eff_accept + theme_bw(15), height = 6, width = 9)
 ```
 
 **Figure 8.** Plot of logistic regression model of responders' acceptance probability as a function of offer amount and condition (gray shaded areas indicate 2 SE, rug indicates offers). Model coefficients are in Table 3.
@@ -87,6 +104,7 @@ visreg(m_accept, xvar='offer', by='condition', scale='response', jitter = TRUE)
 
 ```{r echo=FALSE, warning=FALSE}
 plot_accept
+ggsave('Figures/Figure 9.pdf', plot_accept + labs(x = '\nPredicted probability') + theme_bw(15), height = 6, width = 9)
 ```
 
 **Figure 9.** Plot of fitted probabilities of acceptance in the logistic model that includes experimental condition and offer amount (Figure 8), for true rejections (top) and true acceptances (bottom). If the logistic model has perfect predictability, then true rejections should cluster at 0 and true acceptances should cluster at 1. This logistic model was better at predicting true acceptances (bottom) than true rejections (top). The coefficient of discrimination (Tjur's D) is the difference in the mean probabilities of true acceptances minus the mean probabilities of true rejections. This measure can be used as a logistic regression analogue to an $R^2$ coefficient of determination [@tjur2009].
@@ -94,6 +112,7 @@ plot_accept
 
 ```{r echo=FALSE, warning=FALSE}
 plot_accept_mosaic
+ggsave('Figures/Figure 10.pdf', plot_accept_mosaic, height = 6, width = 9)
 ```
 
 **Figure 10.** Mosaic plot of frequencies of responders' acceptance and rejection of offers under 50% ("Hypo"), at 50% ("Fair"), and over 50% ("Hyper") by condition.
@@ -105,7 +124,7 @@ This was true even though most participants reported only moderate familiarity w
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 
 plot_fair_actual
-
+ggsave('Figures/Figure 11.pdf', plot_fair_actual + theme_bw(15), height = 6, width = 9)
 ```
 
 **Figure 11.** Amount offered (%) among proposers in the banker and customer conditions, as a function of their reported opinions about fair currency fee (%). Conditions are separately represented by color.
@@ -115,6 +134,8 @@ The pilot study results (previously discussed) informed our experimental design 
 
 ```{r echo=FALSE, warning=FALSE}
 grid.arrange(plot_pilot, plot_final)
+fig12 <- arrangeGrob(plot_pilot + theme_bw(15), plot_final + theme_bw(15), nrow = 2)
+ggsave('Figures/Figure 12.pdf', fig12, height = 6, width = 9)
 ```
 
 **Figure 12.** Distribution of offers in the pilot data (top row) and final study (bottom row). Study instructions were tweaked following the pilot study, which appeared to reduce low offers in the banker condition in the final study. The windfall condition is omitted in this figure because it did not have a corresponding pilot condition.
@@ -136,6 +157,7 @@ Nonetheless, these measures included standard and fair currency fees, broker fee
 
 ```{r echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 plot_effect_sizes
+ggsave('Figures/Figure 13.pdf', plot_effect_sizes + theme_bw(15), height = 6, width = 9)
 ```
 
 **Figure 13.** Effect sizes (absolute values of Cohen's d) from this study (denoted by "**") and a representative sample of previous framing studies. Colors represent game type and bars indicate 95% CI. For reference, d = 0.8 is considered a large effect by convention.
